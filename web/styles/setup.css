@@ -1,0 +1,802 @@
+/* —— Preparación —— */
+/* Pantallas previas al partido: pasos, portada con la lista de actas, datos del partido, plantillas de
+   los equipos y sorteo con la formación inicial. */
+
+/* —— Pasos —— */
+/* Círculos numerados; la raya que los une es un ::before de cada paso salvo el primero. */
+.stepper {
+    display: flex;
+    margin-block: 4px 18px;
+    margin-inline: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stepper li {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-inline-size: 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-3);
+}
+
+.stepper li::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 15px;
+    inset-inline-start: calc(-50% + 18px);
+    inset-inline-end: calc(50% + 18px);
+    block-size: 2px;
+    background: var(--rule);
+}
+
+.stepper li:first-child::before {
+    display: none;
+}
+
+/* El li forma parte del selector para superar al ::before genérico. */
+.stepper li.stepper-done::before {
+    background: var(--brand);
+}
+
+.stepper li.stepper-current::before {
+    background: var(--brand);
+}
+
+.stepper .stepper-num {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: 32px;
+    block-size: 32px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    color: var(--text-3);
+    background: var(--card);
+    border: 2px solid var(--rule);
+    border-radius: 50%;
+}
+
+.stepper li.stepper-done .stepper-num {
+    color: var(--brand);
+    background: var(--brand-soft);
+    border-color: var(--brand);
+}
+
+.stepper li.stepper-current .stepper-num {
+    color: var(--on-brand);
+    background: var(--brand);
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px var(--brand-soft);
+}
+
+.stepper li.stepper-current {
+    color: var(--text);
+}
+
+.stepper .stepper-label {
+    padding-block: 0;
+    padding-inline: 2px;
+    line-height: 1.2;
+}
+
+/* En el móvil solo se lee el nombre del paso actual, que además se lleva más ancho. */
+@media (max-width: 640px) {
+    .stepper li:not(.stepper-current) .stepper-label {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .stepper li.stepper-current {
+        flex: 2.2;
+    }
+}
+
+/* —— Títulos y textos de entrada —— */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-block: 22px 10px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.subhead {
+    margin-block: 4px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.lead {
+    margin-block: 0 14px;
+    margin-inline: 0;
+    color: var(--text-2);
+}
+
+.counter {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-inline-size: 24px;
+    block-size: 24px;
+    padding-block: 0;
+    padding-inline: 7px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    color: var(--brand);
+    background: var(--brand-soft);
+    border-radius: 12px;
+}
+
+.badge {
+    display: inline-block;
+    padding-block: 2px;
+    padding-inline: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--text-2);
+    background: var(--card-2);
+    border-radius: 10px;
+}
+
+.badge.badge--live {
+    color: var(--brand);
+    background: var(--brand-soft);
+}
+
+.badge.badge--done {
+    color: var(--good);
+    background: var(--good-bg);
+}
+
+/* —— Portada —— */
+.hero {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 24px;
+    margin-block: 4px 8px;
+    margin-inline: 0;
+    padding-block: 22px 24px;
+    padding-inline: 22px;
+    overflow: hidden;
+    color: var(--on-night);
+    background: linear-gradient(135deg, var(--night) 0%, var(--night-2) 100%);
+    border-radius: 18px;
+}
+
+/* Aro decorativo en la esquina; no debe interceptar toques. */
+.hero::after {
+    content: "";
+    position: absolute;
+    inset-block-start: -60px;
+    inset-inline-end: -60px;
+    inline-size: 220px;
+    block-size: 220px;
+    border: 28px solid rgba(253, 186, 140, .1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.hero h2 {
+    margin-block: 0 6px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.05;
+    font-variant-numeric: normal;
+}
+
+.hero p {
+    max-inline-size: 420px;
+    margin: 0;
+    color: var(--on-night-2);
+}
+
+.hero-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Botones secundarios sobre fondo oscuro: solo contorno. */
+.hero button:not(.cta) {
+    color: var(--on-night);
+    background: transparent;
+    border-color: rgba(203, 187, 174, .45);
+}
+
+.hero .button-like {
+    color: var(--on-night);
+    background: transparent;
+    border-color: rgba(203, 187, 174, .45);
+}
+
+.hero button:not(.cta):hover {
+    color: #ffffff;
+    border-color: var(--ember);
+}
+
+.hero .button-like:hover {
+    color: #ffffff;
+    border-color: var(--ember);
+}
+
+/* Dos clases, por debajo del hover genérico de base: al pasar por encima se ve el borde de acento. */
+.hero .cta {
+    color: var(--night);
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
+button.cta-big {
+    min-block-size: 50px;
+    padding-block: 0;
+    padding-inline: 22px;
+    font-size: 16px;
+}
+
+/* —— Lista de actas —— */
+.record-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.record-item {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px 16px;
+    padding-block: 12px;
+    padding-inline: 14px;
+    background: var(--card);
+    border: var(--hairline);
+    border-radius: 14px;
+    box-shadow: var(--lift);
+}
+
+.record-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-inline-size: 0;
+}
+
+.record-teams {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 14px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.record-team {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: 0;
+}
+
+.swatch {
+    display: inline-block;
+    inline-size: 14px;
+    block-size: 14px;
+    margin-inline-end: 6px;
+    vertical-align: 1px;
+    border: 1px solid rgba(0, 0, 0, .3);
+    border-radius: 3px;
+}
+
+.record-team .swatch {
+    flex: none;
+    inline-size: 12px;
+    block-size: 12px;
+    margin-inline-end: 7px;
+    border-radius: 50%;
+}
+
+.record-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+}
+
+.record-buttons {
+    display: flex;
+    gap: 4px;
+    margin-inline-start: auto;
+}
+
+.empty-note {
+    margin: 0;
+    padding: 22px;
+    text-align: center;
+    color: var(--text-3);
+    border: 1.5px dashed var(--rule);
+    border-radius: 14px;
+}
+
+/* —— Datos del partido —— */
+.cols-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px 16px;
+}
+
+.cols-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px 16px;
+}
+
+/* Nombre y licencia en parejas: dos por fila en el móvil, cuatro desde 900 px. */
+.pairs {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 0 16px;
+}
+
+@media (min-width: 900px) {
+    .pairs {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    }
+}
+
+.option-list {
+    margin-block-start: 6px;
+    padding-block-start: 4px;
+    border-block-start: var(--hairline);
+}
+
+/* Fila de casilla con explicación: el !important supera al display de las etiquetas de campo. */
+.option-row {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 10px;
+    margin-block: 10px;
+    margin-inline: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.option-row input {
+    flex: none;
+    inline-size: 20px;
+    block-size: 20px;
+    margin-block-start: 2px;
+    accent-color: var(--brand);
+}
+
+/* Cada equipo con una franja de su color a la izquierda. */
+.team-boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.team-box {
+    padding-block: 12px 2px;
+    padding-inline: 14px;
+    background: var(--card-2);
+    border: var(--hairline);
+    border-inline-start: 6px solid var(--team-tint);
+    border-radius: 12px;
+}
+
+.team-box h3 {
+    margin-block: 0 10px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.team-box-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 72px 72px;
+    gap: 0 10px;
+}
+
+/* input[type=color] no entra en la regla común de campos; aquí recibe todo lo suyo. */
+.field.field--color input {
+    block-size: 44px;
+    padding: 3px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* —— Plantillas —— */
+.panel.roster-panel {
+    border-block-start: 5px solid var(--team-tint);
+}
+
+.roster-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-block: 0 10px;
+    margin-inline: 0;
+}
+
+/* Va después de .panel h2 y con la misma especificidad: gana por orden. */
+.roster-head h2 {
+    margin: 0;
+}
+
+.roster-name {
+    margin-inline-start: auto;
+}
+
+.more-staff {
+    margin-block: 2px 12px;
+    margin-inline: 0;
+}
+
+.more-staff summary {
+    min-block-size: 32px;
+    padding-block: 6px;
+    padding-inline: 0;
+    font-weight: 600;
+    color: var(--brand);
+    cursor: pointer;
+}
+
+.more-staff[open] summary {
+    margin-block-end: 8px;
+}
+
+/* —— Tabla de jugadores —— */
+.grid-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.grid-table td {
+    padding: 4px;
+    text-align: left;
+    vertical-align: middle;
+    border-block-end: var(--hairline);
+}
+
+.grid-table th {
+    padding: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-align: left;
+    text-transform: uppercase;
+    vertical-align: middle;
+    color: var(--text-3);
+    border-block-end: var(--hairline);
+}
+
+.grid-table input[type=text] {
+    min-block-size: 38px;
+    margin: 0;
+    padding-block: 6px;
+    padding-inline: 8px;
+}
+
+.grid-table input[type=number] {
+    min-block-size: 38px;
+    margin: 0;
+    padding-block: 6px;
+    padding-inline: 8px;
+}
+
+.grid-table input.shirt-input {
+    inline-size: 64px;
+}
+
+.grid-table .check {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.grid-table .check input {
+    inline-size: 18px;
+    block-size: 18px;
+}
+
+.grid-table input[aria-invalid="true"] {
+    color: var(--bad);
+    background: var(--bad-bg);
+    border-color: var(--card-red);
+}
+
+.grid-table tbody tr:hover td {
+    background: var(--card-2);
+}
+
+.grid-table .cell-label {
+    display: none;
+}
+
+/* La celda del nombre lleva a propósito la letra condensada grande y el margen de los rótulos de la
+   pista: su input hereda esa letra con peso normal. */
+.col-name {
+    display: flex;
+    justify-content: space-between;
+    margin-block: 0 8px;
+    margin-inline: 4px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.col-name span:last-child {
+    text-align: right;
+}
+
+.remove-btn {
+    min-block-size: 36px;
+    padding-block: 0;
+    padding-inline: 10px;
+    border-width: 1px;
+}
+
+select.category-select {
+    min-inline-size: 64px;
+    padding-block: 6px;
+    padding-inline: 4px;
+    font-size: 13px;
+}
+
+/* En el móvil cada jugador ocupa dos líneas: dorsal y nombre arriba; capitán, líbero y categoría
+   debajo. Va después de las reglas de escritorio para ganarles por orden. */
+@media (max-width: 700px) {
+    .grid-table thead {
+        display: none;
+    }
+
+    .grid-table {
+        display: block;
+    }
+
+    .grid-table tbody {
+        display: block;
+    }
+
+    .grid-table tr {
+        display: grid;
+        grid-template-columns: 58px auto auto minmax(0, 1fr) 40px;
+        grid-template-areas:
+            "shirt name name name remove"
+            "shirt captain libero category category";
+        align-items: center;
+        gap: 6px 10px;
+        padding-block: 10px;
+        padding-inline: 0;
+        border-block-end: var(--hairline);
+    }
+
+    .grid-table td {
+        display: block;
+        padding: 0;
+        border: 0;
+    }
+
+    .grid-table tbody tr:hover td {
+        background: none;
+    }
+
+    .grid-table .col-shirt {
+        grid-area: shirt;
+        align-self: stretch;
+    }
+
+    .grid-table .col-shirt input {
+        inline-size: 100%;
+        block-size: 100%;
+        font-family: var(--condensed);
+        font-stretch: var(--narrow);
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1;
+        font-variant-numeric: normal;
+        text-align: center;
+    }
+
+    .grid-table .col-name {
+        grid-area: name;
+    }
+
+    .grid-table .col-captain {
+        grid-area: captain;
+    }
+
+    .grid-table .col-libero {
+        grid-area: libero;
+    }
+
+    .grid-table .col-category {
+        grid-area: category;
+        justify-self: end;
+    }
+
+    .grid-table .col-remove {
+        grid-area: remove;
+        justify-self: end;
+    }
+
+    .grid-table .cell-label {
+        display: inline;
+    }
+
+    .grid-table .check {
+        min-block-size: 32px;
+    }
+}
+
+/* —— Sorteo y formación inicial —— */
+.lineup-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    max-inline-size: 330px;
+}
+
+.lineup-grid label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-2);
+}
+
+.lineup-grid select {
+    margin-block-start: 2px;
+}
+
+/* Media pista vista desde el banquillo, con la red arriba. */
+.half-court {
+    --net: #1a1a1a;
+    max-inline-size: 360px;
+    padding-block: 0 12px;
+    padding-inline: 10px;
+    background: var(--floor);
+    border: 3px solid #ffffff;
+    border-radius: 6px;
+    outline: 2px solid var(--floor-edge);
+}
+
+.half-court-net {
+    block-size: 22px;
+    margin-block: 0 12px;
+    margin-inline: -10px;
+    font-size: 0;
+    color: transparent;
+    background: repeating-linear-gradient(90deg, var(--net) 0 2px, var(--net-light) 2px 7px);
+    border-block-end: 3px solid var(--net);
+}
+
+.half-court .lineup-grid {
+    gap: 10px;
+    max-inline-size: none;
+}
+
+.half-court .lineup-grid label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+
+.half-court .lineup-grid select {
+    min-block-size: 48px;
+    padding-block: 4px;
+    padding-inline: 6px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    text-align: center;
+    color: #2a211c;
+    background: #ffffff;
+    border-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+/* Anillo oscuro alrededor del que saca primero. */
+.half-court .lineup-grid label.lineup-serve select {
+    box-shadow: 0 0 0 3px var(--night), 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+/* —— Dos columnas —— */
+@media (min-width: 640px) {
+    .duo--compact {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: 16px;
+    }
+
+    .duo--compact .panel {
+        margin: 0;
+    }
+}
+
+@media (min-width: 1100px) {
+    .duo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: 16px;
+    }
+
+    .duo .panel {
+        margin: 0;
+    }
+}
+
+/* —— Partido en móvil y tableta —— */
+@media (max-width: 1099px) {
+    .mode-live .stepper {
+        display: none;
+    }
+}

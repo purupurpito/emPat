@@ -1,0 +1,582 @@
+/* —— Cierre —— */
+/* Pantalla final (veredicto, datos que se completan, firmas y aprobación), firmas previas al
+   partido, lienzo de firma y barra de la vista del acta. */
+
+/* —— Veredicto —— */
+/* Cabecera en tinta como la portada y el intervalo: ganador, sets frente a frente y parciales. */
+.verdict {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    margin-block: 0 16px;
+    padding-block: 20px 20px;
+    padding-inline: 20px;
+    overflow: hidden;
+    color: var(--on-night);
+    background: linear-gradient(135deg, var(--night) 0%, var(--night-2) 100%);
+    border-radius: 20px;
+}
+
+.verdict::after {
+    content: "";
+    position: absolute;
+    inset-block-start: -70px;
+    inset-inline-end: -70px;
+    inline-size: 220px;
+    block-size: 220px;
+    border: 28px solid rgba(253, 186, 140, .1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.verdict h2 {
+    margin: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.verdict-board {
+    display: grid;
+    max-inline-size: 620px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
+    gap: 12px;
+}
+
+.verdict-team {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+}
+
+.verdict-team:last-child {
+    justify-items: end;
+    text-align: end;
+}
+
+.verdict-name {
+    display: flex;
+    align-items: center;
+    max-inline-size: 100%;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--on-night-2);
+}
+
+.verdict-sets {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 84px;
+    font-weight: 800;
+    line-height: .9;
+    font-variant-numeric: tabular-nums;
+    color: var(--on-night-2);
+}
+
+.verdict-team.is-winner .verdict-name {
+    color: var(--on-night);
+}
+
+.verdict-team.is-winner .verdict-sets {
+    color: var(--ember);
+}
+
+.verdict-dash {
+    padding-block-end: 10px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--on-night-2);
+}
+
+.verdict-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.verdict-chips li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding-block: 4px;
+    padding-inline: 10px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    background: rgba(255, 255, 255, .08);
+    border-inline-start: 4px solid var(--chip-bg, var(--on-night-2));
+    border-radius: 8px;
+}
+
+.verdict-chips b,
+.verdict-chips small {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--on-night-2);
+}
+
+.verdict-forfeit {
+    margin: 0;
+    padding-block: 8px;
+    padding-inline: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(211, 47, 47, .35);
+    border-inline-start: 4px solid var(--card-red);
+    border-radius: 10px;
+}
+
+.verdict-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.verdict-actions button {
+    color: var(--on-night);
+    background: transparent;
+    border-color: rgba(203, 187, 174, .45);
+}
+
+.verdict-actions button:hover:not(:disabled) {
+    color: #ffffff;
+    border-color: var(--ember);
+}
+
+/* —— Disposición del cierre —— */
+.closing-pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0 14px;
+}
+
+.closing-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-block: 0 8px;
+    margin-inline: 0;
+}
+
+/* Va después de .panel h2 y con la misma especificidad: gana por orden. */
+.closing-head h2 {
+    margin: 0;
+}
+
+.closing-sub {
+    margin-block: 8px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+/* En pantalla ancha el cierre (firmas y aprobación) va en una columna propia, pegada arriba. */
+@media (min-width: 1000px) {
+    .closing {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 420px);
+        align-items: start;
+        gap: 16px;
+    }
+
+    .closing-side {
+        position: sticky;
+        inset-block-start: 12px;
+    }
+}
+
+/* Las tablas del cierre siguen siendo tablas en el móvil: las reglas de la tabla de plantilla las
+   convierten en fichas de dos líneas por debajo de 700 px, y aquí se deshace. */
+@media (max-width: 700px) {
+    .closing .grid-table {
+        display: table;
+        font-size: 13px;
+    }
+
+    .closing .grid-table thead {
+        display: table-header-group;
+    }
+
+    .closing .grid-table tbody {
+        display: table-row-group;
+    }
+
+    .closing .grid-table tr {
+        display: table-row;
+    }
+
+    .closing .grid-table td,
+    .closing .grid-table th {
+        display: table-cell;
+        padding: 4px;
+        border-block-end: var(--hairline);
+    }
+
+    .closing .grid-table .cell-label {
+        display: none;
+    }
+}
+
+.closing .panel:has(.grid-table) {
+    overflow-x: auto;
+}
+
+/* —— Correcciones y observaciones —— */
+.amend-list,
+.note-list {
+    display: grid;
+    gap: 6px;
+    margin-block: 0 12px;
+    margin-inline: 0;
+    padding: 0;
+    font-size: 14px;
+    list-style: none;
+}
+
+.amend-list li,
+.note-list li {
+    padding-block: 6px;
+    padding-inline: 10px;
+    background: var(--card-2);
+    border-radius: 10px;
+}
+
+.amend-time {
+    margin-inline-end: 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-3);
+}
+
+/* —— Set obligatorio —— */
+/* El hover de la tabla pesa más que esta regla: al pasar por encima de la fila manda él. */
+.fullset-table .fullset-miss td {
+    background: var(--bad-bg);
+}
+
+/* Va detrás de la casilla genérica de la tabla (18 px) y le gana por orden. */
+.fullset-table .check input {
+    inline-size: 22px;
+    block-size: 22px;
+    accent-color: var(--brand);
+}
+
+.mark-yes {
+    font-weight: 700;
+    color: var(--good);
+}
+
+.mark-no {
+    font-weight: 700;
+    color: var(--bad);
+}
+
+/* —— Firmas del cierre —— */
+/* Lista de pasos: un círculo con el orden (✓ al firmar), quién firma, la firma y el botón. */
+.sign-steps {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sign-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    grid-template-areas:
+        "mark who button"
+        "mark image image";
+    align-items: center;
+    gap: 4px 12px;
+    padding-block: 10px;
+    padding-inline: 0;
+    border-block-start: var(--hairline);
+}
+
+.sign-step:first-child {
+    border-block-start: 0;
+}
+
+.sign-step .sign-mark {
+    grid-area: mark;
+    align-self: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: 32px;
+    block-size: 32px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    color: var(--text-3);
+    background: var(--card);
+    border: 2px solid var(--rule);
+    border-radius: 50%;
+}
+
+.sign-step.is-signed .sign-mark {
+    color: var(--on-brand);
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+.sign-step .sign-who {
+    grid-area: who;
+    display: grid;
+    min-inline-size: 0;
+}
+
+.sign-step .sign-who b {
+    font-size: 15px;
+}
+
+.sign-step .sign-state {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-3);
+}
+
+.sign-step button {
+    grid-area: button;
+    min-block-size: 40px;
+    padding-inline: 14px;
+}
+
+.sign-step:not(.is-signed) button {
+    color: var(--brand);
+    border-color: var(--brand);
+}
+
+.sign-step .sign-image {
+    grid-area: image;
+    inline-size: 100%;
+    max-inline-size: 260px;
+    block-size: 56px;
+    object-fit: contain;
+    object-position: left center;
+    background: #ffffff;
+    border: var(--hairline);
+    border-radius: 8px;
+}
+
+/* —— Aprobación —— */
+.closing-seal {
+    border: 2px dashed var(--brand);
+    box-shadow: none;
+}
+
+.closing-seal .seal-badge {
+    display: flex;
+    flex: none;
+    justify-content: center;
+    align-items: center;
+    inline-size: 34px;
+    block-size: 34px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--brand);
+    background: var(--brand-soft);
+    border-radius: 50%;
+}
+
+/* Candado dibujado: arco y cuerpo. */
+.closing-seal:not(.is-sealed) .seal-badge::before {
+    content: "";
+    inline-size: 14px;
+    block-size: 11px;
+    margin-block-start: 8px;
+    background: currentColor;
+    border-radius: 3px;
+    box-shadow: 0 -8px 0 -3px var(--brand-soft), 0 -9px 0 -1px currentColor;
+}
+
+.seal-pins {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+    margin-block-start: 10px;
+}
+
+.closing-seal .cta {
+    inline-size: 100%;
+    min-block-size: 48px;
+}
+
+.closing-seal.is-sealed {
+    background: var(--good-bg);
+    border: 2px solid var(--good);
+}
+
+.closing-seal.is-sealed .seal-badge {
+    color: #ffffff;
+    background: var(--good);
+}
+
+.closing-seal .seal-done {
+    margin-block: 0 8px;
+    margin-inline: 0;
+    font-weight: 600;
+    color: var(--good);
+}
+
+/* —— Firmas previas al partido —— */
+.sign-grid {
+    --sign-min: 220px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--sign-min), 1fr));
+    gap: 10px;
+}
+
+.sign-grid .sign-cell {
+    padding-block: 10px;
+    padding-inline: 12px;
+    background: var(--card-2);
+    border: var(--hairline);
+    border-radius: 12px;
+}
+
+.sign-grid img {
+    inline-size: 100%;
+    block-size: 70px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 4px;
+}
+
+/* —— Lienzo de firma —— */
+/* El lienzo se queda con el gesto entero: sin esto, firmar desplazaría la página. Una línea de
+   base punteada indica dónde firmar. */
+.sign-box {
+    position: relative;
+}
+
+.sign-box canvas {
+    display: block;
+    inline-size: 100%;
+    block-size: 170px;
+    background:
+        linear-gradient(transparent calc(100% - 42px), #d9cbbd calc(100% - 42px), #d9cbbd calc(100% - 40px), transparent calc(100% - 40px)),
+        #ffffff;
+    border: 2px solid var(--rule);
+    border-radius: 14px;
+    touch-action: none;
+}
+
+.sign-box canvas:focus-visible {
+    border-color: var(--brand);
+}
+
+/* —— Vista del acta —— */
+/* Barra en tinta pegada arriba: volver, formato y el botón de imprimir. */
+.paper-bar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-block: -16px 12px;
+    margin-inline: -16px;
+    padding-block: 10px;
+    padding-inline: 16px;
+    color: var(--on-night);
+    background: var(--night);
+    border-block-end: 4px solid var(--brand);
+}
+
+.paper-bar .paper-back {
+    color: var(--on-night);
+    background: transparent;
+    border-color: rgba(203, 187, 174, .45);
+}
+
+.paper-bar .paper-back:hover:not(:disabled) {
+    border-color: var(--ember);
+}
+
+.paper-bar .pills {
+    gap: 0;
+    padding: 3px;
+    background: var(--night-2);
+    border-radius: 12px;
+}
+
+.paper-bar .pills label {
+    min-block-size: 40px;
+    color: var(--on-night-2);
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+}
+
+.paper-bar .pills label:has(input:checked) {
+    color: var(--night);
+    background: var(--ember);
+}
+
+.paper-bar .cta {
+    margin-inline-start: auto;
+}
+
+.paper-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-block: 0 10px;
+    margin-inline: 0;
+    font-size: 13.5px;
+    color: var(--text-2);
+}
+
+.paper-hint::before {
+    content: "i";
+    display: inline-flex;
+    flex: none;
+    justify-content: center;
+    align-items: center;
+    inline-size: 20px;
+    block-size: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--brand);
+    background: var(--brand-soft);
+    border-radius: 50%;
+}
+
+@media (max-width: 560px) {
+    .paper-bar .cta {
+        flex: 1 1 100%;
+        margin-inline-start: 0;
+    }
+}

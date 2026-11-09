@@ -1,0 +1,1554 @@
+/* —— Partido —— */
+/* Partido en juego e intervalo entre sets. El marcador es una franja de tinta que continúa la
+   cabecera; cada equipo tiene su consola (pista, acciones y banquillo) y la mesa del anotador
+   (último suceso, herramientas, sucesos y parciales) va en una columna aparte en pantalla ancha. */
+
+/* —— Disposición —— */
+/* En el móvil todo va en una columna; la mesa se deshace (display: contents) para que el último
+   suceso suba justo debajo del marcador y el resto quede al final. */
+.live {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.live .desk {
+    display: contents;
+}
+
+.live .board {
+    order: 1;
+}
+
+.live .last-call {
+    order: 2;
+}
+
+.live .alerts {
+    order: 3;
+}
+
+.live .console-switch {
+    order: 4;
+}
+
+.live .consoles {
+    order: 5;
+}
+
+.live .desk-tools {
+    order: 6;
+}
+
+.live .feed {
+    order: 7;
+}
+
+.live .partials {
+    order: 8;
+}
+
+.live .key-hints {
+    display: none;
+}
+
+/* Rótulos de las piezas de la mesa: versalitas pequeñas, como los de las tablas de plantilla. */
+.desk-title {
+    margin-block: 0 8px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+/* —— Marcador —— */
+/* En el móvil ocupa todo el ancho y se pega a la cabecera, que pierde su raya inferior. */
+.board {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas:
+        "west period east"
+        "west clock east"
+        "history history history";
+    align-items: center;
+    gap: 4px 8px;
+    margin-block: -8px 0;
+    margin-inline: -16px;
+    padding-block: 6px 12px;
+    padding-inline: 12px;
+    color: var(--on-night);
+    background: var(--night);
+    border-end-start-radius: 22px;
+    border-end-end-radius: 22px;
+}
+
+.board .board-team--west {
+    grid-area: west;
+}
+
+.board .board-team--east {
+    grid-area: east;
+}
+
+/* En el móvil el centro se deshace para repartir sus piezas por la rejilla del marcador. */
+.board .board-mid {
+    display: contents;
+}
+
+.board .board-period {
+    grid-area: period;
+    align-self: end;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+    letter-spacing: .05em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--ember);
+}
+
+.board .board-clock {
+    grid-area: clock;
+    align-self: start;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--on-night-2);
+}
+
+/* Ficha de equipo: es el botón de punto. El color del equipo va en la raya de arriba. */
+.board .board-team {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr auto;
+    align-self: stretch;
+    justify-content: stretch;
+    justify-items: start;
+    gap: 2px;
+    min-block-size: 0;
+    padding-block: 10px 0;
+    padding-inline: 0;
+    overflow: hidden;
+    color: var(--on-night);
+    text-align: start;
+    background: var(--night-2);
+    border: 0;
+    border-radius: 16px;
+    box-shadow: inset 0 5px 0 var(--team);
+    transition: transform .08s;
+}
+
+.board .board-team:hover:not(:disabled) {
+    border-color: transparent;
+}
+
+.board .board-team:active {
+    transform: scale(.97);
+}
+
+.board .board-team:focus-visible {
+    outline: 3px solid var(--ember);
+    outline-offset: 2px;
+}
+
+.board .board-team--east {
+    justify-items: end;
+    text-align: end;
+}
+
+.board .board-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-block-size: 20px;
+    padding-inline: 12px;
+}
+
+.board .board-team--east .board-meta {
+    flex-direction: row-reverse;
+}
+
+.board .board-name {
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    padding-inline: 12px;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.board .board-sets {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.board .board-sets i {
+    inline-size: 11px;
+    block-size: 11px;
+    border: 2px solid var(--on-night-2);
+    border-radius: 3px;
+}
+
+.board .board-sets i.is-on {
+    background: var(--ember);
+    border-color: var(--ember);
+}
+
+.board .board-points {
+    padding-inline: 12px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 76px;
+    font-weight: 800;
+    line-height: .95;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+}
+
+/* Pie de la ficha en teja: dice qué hace el toque. */
+.board .board-cta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    justify-self: stretch;
+    min-block-size: 42px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    letter-spacing: .02em;
+    color: var(--on-brand);
+    background: var(--brand);
+}
+
+.board .board-team:hover .board-cta {
+    filter: brightness(1.08);
+}
+
+.board kbd {
+    min-inline-size: 0;
+    padding-block: 1px;
+    padding-inline: 5px;
+    font-family: inherit;
+    font-size: 13px;
+    color: inherit;
+    background: transparent;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    opacity: .8;
+}
+
+@media (hover: none) {
+    .board kbd {
+        display: none;
+    }
+}
+
+.serve-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding-block: 2px;
+    padding-inline: 7px 8px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: normal;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--night);
+    background: var(--ember);
+    border-radius: 999px;
+}
+
+/* El balón del saque: un círculo amarillo con dos costuras. */
+.serve-pill::before {
+    content: "";
+    inline-size: 9px;
+    block-size: 9px;
+    background: radial-gradient(circle at 35% 35%, #fff6c2, #f5c400 70%);
+    border: 1px solid rgba(0, 0, 0, .45);
+    border-radius: 50%;
+}
+
+.board .board-history {
+    grid-area: history;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.board .board-history li {
+    padding-block: 2px;
+    padding-inline: 8px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+    color: var(--on-night);
+    background: rgba(255, 255, 255, .08);
+    border-inline-start: 4px solid var(--chip-bg);
+    border-radius: 6px;
+}
+
+.board .board-history b {
+    font-weight: 600;
+    color: var(--on-night-2);
+}
+
+/* —— Último suceso —— */
+.last-call {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-block: 6px;
+    padding-inline: 14px 6px;
+    background: var(--card);
+    border: var(--hairline);
+    border-radius: 14px;
+    box-shadow: var(--lift);
+}
+
+.last-call .last-line {
+    display: -webkit-box;
+    flex: 1;
+    min-inline-size: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.3;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.last-call .last-tag {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.last-call .last-text {
+    font-weight: 600;
+}
+
+.last-call .last-empty {
+    color: var(--text-3);
+}
+
+.undo-btn {
+    flex: none;
+    min-block-size: 44px;
+    padding-inline: 14px;
+    color: var(--brand);
+    background: transparent;
+    border-color: var(--brand);
+    border-radius: 12px;
+}
+
+.undo-btn .undo-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.undo-btn:disabled {
+    color: var(--text-3);
+    border-color: var(--rule);
+}
+
+/* —— Avisos —— */
+.alerts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 8px;
+}
+
+.alert {
+    padding-block: 10px 12px;
+    padding-inline: 14px;
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-inline-start-width: 6px;
+    border-radius: 14px;
+}
+
+.alert .alert-team {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--text-2);
+}
+
+.alert .alert-text {
+    margin-block: 2px 8px;
+    margin-inline: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.alert-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.alert-choices button {
+    min-inline-size: 52px;
+    min-block-size: 48px;
+    padding-inline: 10px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    border-radius: 12px;
+}
+
+.alert.alert--captain {
+    background: var(--bad-bg);
+    border-color: var(--bad);
+}
+
+.alert.alert--captain .alert-text {
+    color: var(--bad);
+}
+
+.alert.alert--libero {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    border-inline-start-color: var(--chip-bg);
+}
+
+.alert.alert--urgent {
+    color: var(--bad);
+    background: var(--bad-bg);
+    border-color: var(--bad);
+}
+
+.alert.alert--urgent .alert-text {
+    margin-block-end: 0;
+}
+
+/* —— Selector de consola (móvil) —— */
+.console-switch {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--card-2);
+    border-radius: 16px;
+}
+
+.console-switch button {
+    display: grid;
+    flex: 1;
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-content: start;
+    align-items: center;
+    gap: 0 2px;
+    min-inline-size: 0;
+    min-block-size: 50px;
+    padding-block: 4px;
+    padding-inline: 10px;
+    text-align: start;
+    color: var(--text-2);
+    background: transparent;
+    border: 0;
+    border-radius: 12px;
+}
+
+.console-switch button:hover:not(:disabled) {
+    color: var(--text);
+}
+
+.console-switch button[aria-pressed="true"] {
+    color: var(--text);
+    background: var(--card);
+    box-shadow: 0 1px 3px rgba(42, 33, 28, .14);
+}
+
+.console-switch .switch-name {
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.console-switch .switch-tally {
+    grid-column: 2;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-3);
+}
+
+/* —— Consola de equipo —— */
+.consoles {
+    display: grid;
+    gap: 14px;
+}
+
+.console {
+    min-inline-size: 0;
+    padding-block: 12px 14px;
+    padding-inline: 12px;
+    background: var(--card);
+    border: var(--hairline);
+    border-block-start: 5px solid var(--team);
+    border-radius: 18px;
+    box-shadow: var(--lift), inset 0 1px 0 rgba(0, 0, 0, .1);
+}
+
+.console.is-folded {
+    display: none;
+}
+
+.console .console-head {
+    display: flex;
+    align-items: center;
+    gap: 2px 8px;
+    margin-block: 0 10px;
+    margin-inline: 2px;
+}
+
+.console .console-head .swatch {
+    margin: 0;
+}
+
+.console .console-name {
+    min-inline-size: 0;
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.console .console-sub {
+    margin-block: 14px 6px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+/* —— Pista —— */
+/* Misma pista que la formación inicial: suelo naranja, red a rayas y fichas blancas. Cada ficha
+   se coloca por su zona; en el móvil la red va arriba. */
+.pitch {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+        "net net net"
+        "z4 z3 z2"
+        "z5 z6 z1";
+    gap: 8px;
+    padding-block: 0 10px;
+    padding-inline: 10px;
+    background: var(--floor);
+    border: 3px solid #ffffff;
+    border-radius: 8px;
+    outline: 2px solid var(--floor-edge);
+}
+
+.pitch .pitch-net {
+    grid-area: net;
+    block-size: 16px;
+    margin-block: 0 4px;
+    margin-inline: -10px;
+    background: repeating-linear-gradient(90deg, #1a1a1a 0 2px, var(--net-light) 2px 7px);
+    border-block-end: 3px solid #1a1a1a;
+}
+
+.tile--z1 {
+    grid-area: z1;
+}
+
+.tile--z2 {
+    grid-area: z2;
+}
+
+.tile--z3 {
+    grid-area: z3;
+}
+
+.tile--z4 {
+    grid-area: z4;
+}
+
+.tile--z5 {
+    grid-area: z5;
+}
+
+.tile--z6 {
+    grid-area: z6;
+}
+
+/* Ficha: el color del equipo en una raya arriba (con un filo oscuro para los equipos blancos). */
+.pitch .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1px;
+    min-inline-size: 0;
+    min-block-size: 68px;
+    padding-block: 9px 6px;
+    padding-inline: 4px;
+    color: #2a211c;
+    background: #ffffff;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: inset 0 5px 0 var(--team), inset 0 6px 0 rgba(0, 0, 0, .14), 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+.pitch .tile:hover:not(:disabled) {
+    box-shadow: inset 0 5px 0 var(--team), inset 0 6px 0 rgba(0, 0, 0, .14), 0 0 0 3px var(--night);
+}
+
+.pitch .tile:focus-visible {
+    outline: 3px solid var(--night);
+    outline-offset: 2px;
+}
+
+.pitch .tile--libero {
+    color: var(--chip-ink);
+    background: var(--chip-bg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+/* Anillo oscuro alrededor del que saca, como en la formación inicial. */
+.pitch .tile--serving {
+    box-shadow: inset 0 5px 0 var(--team), inset 0 6px 0 rgba(0, 0, 0, .14), 0 0 0 3px var(--night), 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+.pitch .tile--libero.tile--serving {
+    box-shadow: 0 0 0 3px var(--night), 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+.tile .tile-shirt {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: normal;
+}
+
+.tile .tile-name {
+    max-inline-size: 100%;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tile .tile-note {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.1;
+    opacity: .7;
+}
+
+.tile .tile-zone {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-start: 7px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: normal;
+    opacity: .55;
+}
+
+.tile .tile-cap {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-end: 6px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-inline-size: 18px;
+    block-size: 18px;
+    padding-inline: 3px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: normal;
+    text-decoration: none;
+    color: #ffffff;
+    background: #2a211c;
+    border-radius: 9px;
+}
+
+.tile .tile-cap--acting {
+    color: #2a211c;
+    background: transparent;
+    border: 1.5px solid #2a211c;
+}
+
+.tile--libero .tile-cap--acting {
+    color: inherit;
+    border-color: currentColor;
+}
+
+.tile .tile-ball {
+    position: absolute;
+    inset-block-start: -7px;
+    inset-inline-end: -7px;
+    inline-size: 18px;
+    block-size: 18px;
+    background: radial-gradient(circle at 35% 35%, #fff6c2, #f5c400 70%);
+    border: 2px solid #2a211c;
+    border-radius: 50%;
+}
+
+.tile .tile-cards {
+    position: absolute;
+    inset-block-end: 6px;
+    inset-inline-end: 6px;
+    display: flex;
+    gap: 2px;
+}
+
+/* —— Acciones del equipo —— */
+.console-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-block-start: 12px;
+}
+
+.console-actions .act {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    min-inline-size: 0;
+    min-block-size: 66px;
+    padding-block: 8px;
+    padding-inline: 4px;
+    font-size: 13px;
+    line-height: 1.15;
+    text-align: center;
+    border-radius: 14px;
+}
+
+/* Rótulos en la letra estrecha: así «Sustitución» cabe entera en cuatro columnas de móvil. */
+.console-actions .act-label {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.act .act-meter {
+    display: flex;
+    gap: 3px;
+}
+
+.act .act-meter i {
+    inline-size: 9px;
+    block-size: 5px;
+    background: var(--rule);
+    border-radius: 3px;
+}
+
+.act .act-meter i.is-on {
+    background: var(--brand);
+}
+
+.act .act-count {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-2);
+}
+
+.act .act-state {
+    padding-block: 1px;
+    padding-inline: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--good);
+    background: var(--good-bg);
+    border-radius: 999px;
+}
+
+/* Dos tarjetas pequeñas, amarilla y roja, delante de la palabra. */
+.act--sanction .act-label::before {
+    content: "";
+    display: block;
+    inline-size: 18px;
+    block-size: 14px;
+    margin-block: 0 5px;
+    margin-inline: auto;
+    background: linear-gradient(100deg, var(--card-yellow) 0 48%, transparent 48% 56%, var(--card-red) 56%);
+    border-radius: 2px;
+}
+
+/* —— Banquillo y sanciones —— */
+.bench-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bench-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 6px;
+    min-inline-size: 0;
+    padding-block: 6px;
+    padding-inline: 10px;
+    font-size: 13px;
+    background: var(--card-2);
+    border-radius: 10px;
+}
+
+.bench-item .bench-shirt {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.bench-item .bench-name {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bench-item .bench-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--brand);
+}
+
+.bench-item .bench-note {
+    flex-basis: 100%;
+    font-size: 11.5px;
+    color: var(--text-3);
+}
+
+.bench-item--libero {
+    box-shadow: inset 4px 0 0 var(--chip-bg);
+}
+
+.bench-item--out {
+    text-decoration: line-through;
+    opacity: .55;
+}
+
+.card-chip {
+    display: inline-block;
+    flex: none;
+    inline-size: 9px;
+    block-size: 13px;
+    vertical-align: -2px;
+    border: 1px solid rgba(0, 0, 0, .25);
+    border-radius: 2px;
+}
+
+.card-chip--warning,
+.card-chip--delayWarning {
+    background: var(--card-yellow);
+}
+
+.card-chip--penalty,
+.card-chip--delayPenalty {
+    background: var(--card-red);
+}
+
+.card-chip--expulsion {
+    background: linear-gradient(90deg, var(--card-yellow) 50%, var(--card-red) 50%);
+}
+
+.card-chip--disqualification {
+    background: repeating-linear-gradient(45deg, var(--card-red) 0 3px, var(--card-yellow) 3px 6px);
+}
+
+.card-chip--improper {
+    background: var(--rule);
+}
+
+.card-list {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    list-style: none;
+}
+
+.card-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 8px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.tag {
+    display: inline-flex;
+    justify-content: center;
+    min-inline-size: 30px;
+    padding-block: 2px;
+    padding-inline: 6px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: normal;
+    border-radius: 8px;
+}
+
+.tag.tag--missing {
+    color: var(--bad);
+    background: var(--bad-bg);
+}
+
+/* —— Herramientas —— */
+.desk-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.desk-tools button {
+    min-block-size: 42px;
+    padding-inline: 12px;
+    font-size: 14px;
+    border-radius: 999px;
+}
+
+.desk-tools button.quiet {
+    border-radius: 10px;
+}
+
+/* —— Sucesos —— */
+/* Línea de tiempo: un punto por suceso, del color del equipo; los puntos ganados van rellenos. */
+.feed {
+    padding-block: 12px 8px;
+    padding-inline: 14px;
+    background: var(--card);
+    border: var(--hairline);
+    border-radius: 14px;
+}
+
+.feed-list {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.feed-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 8px;
+    padding-block: 5px;
+    padding-inline: 20px 0;
+    font-size: 13.5px;
+    line-height: 1.3;
+    color: var(--text-2);
+}
+
+/* Raya que une los puntos; el último suceso de la lista no la necesita. */
+.feed-item::after {
+    content: "";
+    position: absolute;
+    inset-block: 50% -50%;
+    inset-inline-start: 5px;
+    inline-size: 2px;
+    background: var(--rule);
+}
+
+.feed-item:last-child::after {
+    display: none;
+}
+
+.feed-item::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    inset-block-start: calc(5px + .65em - 6px);
+    inset-inline-start: 0;
+    inline-size: 12px;
+    block-size: 12px;
+    background: var(--card);
+    border: 2.5px solid var(--dot, var(--text-3));
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .3);
+}
+
+.feed-item--rally::before {
+    background: var(--dot, var(--text-3));
+}
+
+.feed-item--sanction::before {
+    inline-size: 10px;
+    border-color: rgba(0, 0, 0, .3);
+    border-width: 1px;
+    border-radius: 2px;
+    background: var(--card-yellow);
+}
+
+.feed-item:first-child {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.feed-time {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-3);
+}
+
+/* —— Parciales —— */
+.partials {
+    padding-block: 12px;
+    padding-inline: 14px;
+    background: var(--card);
+    border: var(--hairline);
+    border-radius: 14px;
+}
+
+.partials-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+
+.partials-table th {
+    padding-block: 3px;
+    padding-inline: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-3);
+}
+
+.partials-table thead th[colspan] {
+    max-inline-size: 0;
+    overflow: hidden;
+    font-family: Archivo, system-ui, sans-serif;
+    font-stretch: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-2);
+}
+
+.partials-table thead .swatch {
+    inline-size: 10px;
+    block-size: 10px;
+    margin-inline-end: 4px;
+}
+
+.partials-table td,
+.partials-table tbody th {
+    padding-block: 4px;
+    padding-inline: 2px;
+    border-block-start: var(--hairline);
+}
+
+.partials-table tbody th {
+    font-size: 15px;
+    color: var(--text);
+}
+
+.partials-table tr.is-current td,
+.partials-table tr.is-current th {
+    color: var(--brand);
+    background: var(--brand-soft);
+}
+
+/* —— Teclado —— */
+.key-hints {
+    padding-block: 12px;
+    padding-inline: 14px;
+    border: 1.5px dashed var(--rule);
+    border-radius: 14px;
+}
+
+.key-hints ul {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    font-size: 13.5px;
+    list-style: none;
+}
+
+.key-hints .keys {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+    min-inline-size: 64px;
+}
+
+kbd {
+    display: inline-block;
+    min-inline-size: 22px;
+    padding-block: 1px;
+    padding-inline: 5px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-block-end-width: 3px;
+    border-radius: 5px;
+}
+
+/* —— Tableta: las dos consolas a la vez —— */
+@media (min-width: 760px) {
+    .live .console-switch {
+        display: none;
+    }
+
+    .consoles {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .console.is-folded {
+        display: block;
+    }
+
+    .board {
+        margin-inline: 0;
+        border-radius: 22px;
+    }
+
+    .board .board-points {
+        font-size: 96px;
+    }
+}
+
+/* —— Pantalla ancha —— */
+/* Dos columnas para las consolas y la mesa a la derecha, pegada al desplazarse. Cada pista mira
+   a la red del centro tal como se ve desde la mesa del anotador. */
+@media (min-width: 1100px) {
+    .live {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        grid-template-areas:
+            "board desk"
+            "alerts desk"
+            "consoles desk";
+        grid-template-rows: auto auto 1fr;
+        align-items: start;
+        gap: 14px 16px;
+    }
+
+    .live .board {
+        grid-area: board;
+        margin: 0;
+    }
+
+    .live .alerts {
+        grid-area: alerts;
+    }
+
+    .live .alerts:empty {
+        display: none;
+    }
+
+    .live .consoles {
+        grid-area: consoles;
+    }
+
+    .live .desk {
+        position: sticky;
+        inset-block-start: 12px;
+        grid-area: desk;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-block-size: calc(100vh - 24px);
+        overflow: auto;
+    }
+
+    .live .key-hints {
+        display: block;
+    }
+
+    .board {
+        grid-template-columns: minmax(0, 1fr) minmax(150px, auto) minmax(0, 1fr);
+        grid-template-areas: "west mid east";
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .board .board-mid {
+        display: flex;
+        grid-area: mid;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .board .board-period,
+    .board .board-clock {
+        align-self: center;
+    }
+
+    .board .board-clock {
+        font-size: 30px;
+    }
+
+    .live .desk > * {
+        order: 0;
+    }
+
+    .board .board-history {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .board .board-name {
+        font-size: 17px;
+    }
+
+    .board .board-points {
+        font-size: 100px;
+    }
+
+    .board .board-cta {
+        min-block-size: 48px;
+        font-size: 21px;
+    }
+
+    .pitch.pitch--west {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        grid-template-areas:
+            "z5 z4 net"
+            "z6 z3 net"
+            "z1 z2 net";
+        padding-block: 10px;
+        padding-inline: 10px 0;
+    }
+
+    .pitch.pitch--east {
+        grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "net z2 z1"
+            "net z3 z6"
+            "net z4 z5";
+        padding-block: 10px;
+        padding-inline: 0 10px;
+    }
+
+    .pitch.pitch--west .pitch-net,
+    .pitch.pitch--east .pitch-net {
+        inline-size: 16px;
+        block-size: auto;
+        margin-block: -10px;
+        margin-inline: 0;
+        background: repeating-linear-gradient(0deg, #1a1a1a 0 2px, var(--net-light) 2px 7px);
+        border-block-end: 0;
+    }
+
+    .pitch.pitch--west .pitch-net {
+        border-inline-start: 3px solid #1a1a1a;
+    }
+
+    .pitch.pitch--east .pitch-net {
+        border-inline-end: 3px solid #1a1a1a;
+    }
+
+    .pitch .tile {
+        min-block-size: 78px;
+    }
+
+    .tile .tile-shirt {
+        font-size: 32px;
+    }
+
+    .tile .tile-name {
+        font-size: 13px;
+    }
+
+    .console-actions .act {
+        font-size: 14px;
+    }
+}
+
+/* —— Intervalo entre sets —— */
+/* Cabecera en tinta con el set que acaba de terminar y el reloj del descanso; debajo, las
+   formaciones del set siguiente como en el sorteo. */
+.interval {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    margin-block: 0 16px;
+    padding-block: 18px 20px;
+    padding-inline: 20px;
+    overflow: hidden;
+    color: var(--on-night);
+    background: linear-gradient(135deg, var(--night) 0%, var(--night-2) 100%);
+    border-radius: 20px;
+}
+
+/* Aro decorativo, el mismo de la portada. */
+.interval::after {
+    content: "";
+    position: absolute;
+    inset-block-start: -70px;
+    inset-inline-end: -70px;
+    inline-size: 220px;
+    block-size: 220px;
+    border: 28px solid rgba(253, 186, 140, .1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.interval h2 {
+    margin: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+.interval-score {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+}
+
+.interval-team {
+    display: grid;
+    gap: 2px;
+    min-inline-size: 0;
+}
+
+.interval-team:last-child {
+    text-align: end;
+}
+
+.interval-team .interval-name {
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--on-night-2);
+}
+
+.interval-team .interval-points {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 64px;
+    font-weight: 800;
+    line-height: .95;
+    font-variant-numeric: tabular-nums;
+    color: var(--on-night-2);
+}
+
+.interval-team.is-winner .interval-name,
+.interval-team.is-winner .interval-points {
+    color: var(--on-night);
+}
+
+.interval-team.is-winner .interval-points {
+    color: var(--ember);
+}
+
+.interval-sets {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--on-night-2);
+}
+
+.interval-sets b {
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    color: var(--on-night);
+}
+
+.interval .interval-note {
+    margin: 0;
+    font-size: 14px;
+    color: var(--on-night-2);
+}
+
+.interval-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.interval-actions button {
+    color: var(--on-night);
+    background: transparent;
+    border-color: rgba(203, 187, 174, .45);
+}
+
+.interval-actions button:hover:not(:disabled) {
+    color: #ffffff;
+    border-color: var(--ember);
+}
+
+/* Reloj del descanso: grande y en el tono cálido; en rojo claro cuando ya se ha pasado. */
+.break-timer {
+    justify-self: start;
+    margin: 0;
+    padding-block: 6px;
+    padding-inline: 14px;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--night);
+    background: var(--ember);
+    border-radius: 12px;
+}
+
+.break-timer.break-timer--over {
+    color: #ffffff;
+    background: var(--card-red);
+}
+
+.break-timer:empty {
+    display: none;
+}
+
+.lineup-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-block: 0 10px;
+    margin-inline: 0;
+}
+
+.lineup-head h2 {
+    margin: 0;
+}
+
+.lineup-head button {
+    min-block-size: 38px;
+    margin-inline-start: auto;
+    padding-inline: 12px;
+    font-size: 14px;
+}
+
+/* —— Móvil estrecho —— */
+@media (max-width: 380px) {
+    .board .board-points {
+        font-size: 64px;
+    }
+
+    .console-actions .act {
+        font-size: 12px;
+    }
+}
+
+/* —— Cabecera del partido en el móvil —— */
+/* Sin raya inferior: la tinta de la cabecera sigue en el marcador. */
+@media (max-width: 759px) {
+    .mode-live .topbar {
+        border-block-end-width: 0;
+    }
+
+    .board {
+        padding-block-start: 16px;
+    }
+}

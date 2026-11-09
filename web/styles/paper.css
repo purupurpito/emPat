@@ -1,0 +1,200 @@
+/* —— Papel —— */
+/* Zona de impresión. Guarda dos formatos: el acta oficial (fondo del modelo y tinta encima, medida en
+   puntos del PDF) y el resumen propio en tablas. Fuera de la vista de acta y de la impresión no se ve. */
+
+#print-area {
+    display: none;
+}
+
+/* —— Acta oficial —— */
+/* Cada hoja mide exactamente un A4 apaisado en puntos y se imprime en su página con nombre. */
+.sheet-page {
+    position: relative;
+    inline-size: 841.92pt;
+    block-size: 595.32pt;
+    overflow: hidden;
+    break-after: page;
+    page: official;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+}
+
+.sheet-page:last-child {
+    break-after: auto;
+}
+
+/* La hoja de observaciones que no caben va en vertical. */
+.sheet-page.sheet-page--portrait {
+    inline-size: 595.32pt;
+    block-size: 841.92pt;
+    page: official-portrait;
+}
+
+/* Con id y clase, para ganar al tope de altura de las imágenes del resumen. */
+#print-area .sheet-bg {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: 100%;
+    max-block-size: none;
+}
+
+/* El texto se estrecha con scaleX en línea, por eso el span tiene que ser inline-block. */
+.sheet-page .ink-text {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.sheet-page .ink-text span {
+    display: inline-block;
+}
+
+.sheet-page .ink-ring {
+    position: absolute;
+    border: .8pt solid currentColor;
+    border-radius: 50%;
+}
+
+/* Raya de alto cero: el grosor lo da el borde y el giro se hace desde su extremo izquierdo. */
+.sheet-page .ink-line {
+    position: absolute;
+    block-size: 0;
+    border-block-start: .8pt solid currentColor;
+    transform-origin: 0 50%;
+}
+
+.paper-zoom {
+    transform-origin: 0 0;
+}
+
+@page official {
+    size: A4 landscape;
+    margin: 0;
+}
+
+@page official-portrait {
+    size: A4 portrait;
+    margin: 0;
+}
+
+/* —— Impresión —— */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 8mm;
+    }
+
+    body {
+        font-size: 9.5px;
+        color: #000000;
+        background: #ffffff;
+    }
+
+    /* Solo se imprime el acta, aunque haya un diálogo o un aviso abiertos. */
+    body > *:not(#print-area) {
+        display: none !important;
+    }
+
+    #print-area {
+        display: block;
+    }
+}
+
+/* —— Resumen propio —— */
+#print-area h1 {
+    margin-block: 0 4px;
+    margin-inline: 0;
+    font-family: var(--condensed);
+    font-stretch: var(--narrow);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: normal;
+}
+
+#print-area table {
+    inline-size: 100%;
+    margin-block: 0 6px;
+    margin-inline: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+#print-area td {
+    padding-block: 1.5px;
+    padding-inline: 3px;
+    text-align: center;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+    border: 1px solid #000000;
+}
+
+#print-area th {
+    padding-block: 1.5px;
+    padding-inline: 3px;
+    text-align: center;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+    background: #eeeeee;
+    border: 1px solid #000000;
+}
+
+#print-area .digest-left {
+    text-align: left;
+}
+
+#print-area .digest-block {
+    margin-block: 0 6px;
+    margin-inline: 0;
+    break-inside: avoid;
+}
+
+#print-area .digest-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px;
+}
+
+/* Puntos del set: tachados los anulados, en círculo los que no salen de una jugada. */
+#print-area .digest-pt {
+    display: inline-block;
+    min-inline-size: 13px;
+    text-align: center;
+}
+
+#print-area .digest-pt.digest-pt--void {
+    text-decoration: line-through;
+}
+
+#print-area .digest-pt.digest-pt--ring {
+    border: 1px solid #000000;
+    border-radius: 50%;
+}
+
+#print-area img {
+    max-inline-size: 100%;
+    max-block-size: 34px;
+}
+
+/* —— Vista en pantalla —— */
+.mode-paper #print-area {
+    display: block;
+    padding: 12px;
+    overflow: auto;
+    font-size: 11px;
+    color: #000000;
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+/* El acta oficial ya trae su propio fondo blanco y se escala desde fuera. */
+.mode-paper #print-area.is-official {
+    padding: 0;
+    overflow: visible;
+    background: none;
+}

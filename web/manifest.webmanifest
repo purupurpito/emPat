@@ -1,0 +1,43 @@
+{
+  "id": "./",
+  "name": "emPat · Acta electrónica de voleibol",
+  "short_name": "emPat",
+  "description": "Acta electrónica de voleibol 6x6 con el reglamento FIVB. Trabaja sin conexión y guarda los datos en el propio dispositivo.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2A211C",
+  "background_color": "#FBF7F1",
+  "categories": [
+    "sports",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "purpose": "any",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "src": "icono.svg"
+    },
+    {
+      "purpose": "any",
+      "type": "image/png",
+      "sizes": "192x192",
+      "src": "iconos/icono-192.png"
+    },
+    {
+      "purpose": "any",
+      "type": "image/png",
+      "sizes": "512x512",
+      "src": "iconos/icono-512.png"
+    },
+    {
+      "purpose": "maskable",
+      "type": "image/png",
+      "sizes": "512x512",
+      "src": "iconos/icono-maskable-512.png"
+    }
+  ]
+}

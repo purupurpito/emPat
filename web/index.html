@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang=es>
+<meta charset=utf-8>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name=viewport>
+<meta content=noindex name=robots>
+<meta content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv=Content-Security-Policy>
+<title>emPat · Acta electrónica de voleibol</title>
+<!-- Instalación como aplicación: icono, manifiesto y color de la barra del sistema. -->
+<link href=icono.svg rel=icon type=image/svg+xml>
+<link href=manifest.webmanifest rel=manifest>
+<link href=iconos/apple-touch-icon.png rel=apple-touch-icon>
+<meta content=emPat name=apple-mobile-web-app-title>
+<meta content=#2A211C name=theme-color>
+<!-- Hojas de estilo: el orden importa, cada una puede pisar a las anteriores. -->
+<link href=styles/fonts.css rel=stylesheet>
+<link href=styles/palette.css rel=stylesheet>
+<link href=styles/base.css rel=stylesheet>
+<link href=styles/shell.css rel=stylesheet>
+<link href=styles/setup.css rel=stylesheet>
+<link href=styles/match.css rel=stylesheet>
+<link href=styles/closing.css rel=stylesheet>
+<link href=styles/paper.css rel=stylesheet>
+<!-- La vigilancia carga primero y bloqueando, para ver también sus fallos de carga. -->
+<script src=boot-guard.js></script>
+<script type=module src=src/main.js></script>
+<header class=topbar><div class=topbar-inner>
+  <h1 class=brand data-keep-text>em<b>P</b>at</h1>
+  <p id=subtitle class=topbar-sub>Acta electrónica de voleibol</p>
+</div></header>
+<main id=stage class=stage--wide></main>
+<div aria-labelledby=dlg-title aria-modal=true class=is-hidden id=dlg role=dialog><div class=panel><div id=dlg-body></div></div></div>
+<div aria-live=polite id=flash role=status></div>
+<section aria-label=Acta id=print-area></section>
+<div aria-live=polite class="upd-banner is-hidden" id=upd role=status><span id=upd-text></span><button class=is-hidden id=upd-go type=button>Actualizar</button><button aria-label=Cerrar class=quiet id=upd-close type=button>✕</button></div>
+<script type=module src=src/pwa/updates.js></script>

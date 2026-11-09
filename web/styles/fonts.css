@@ -1,0 +1,28 @@
+/* —— Tipografía —— */
+/* Archivo, variable en peso (100–900) y anchura (62–125 %): un mismo archivo da el texto normal y
+   la versión estrecha de marcadores y titulares (font-stretch). Va partida por bloque de caracteres
+   y el navegador solo descarga la parte que necesita. */
+
+@font-face {
+    font-family: Archivo;
+    src: url("../fuentes/archivo-ext.woff2") format(woff2);
+    unicode-range:
+        u+100-2ba, u+2bd-2c5, u+2c7-2cc, u+2ce-2d7, u+2dd-2ff, u+304, u+308, u+329, u+1d00-1dbf,
+        u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f, u+a720-a7ff;
+    font-weight: 100 900;
+    font-stretch: 62% 125%;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Archivo;
+    src: url("../fuentes/archivo.woff2") format(woff2);
+    unicode-range:
+        u+0-ff, u+131, u+152-153, u+2bb-2bc, u+2c6, u+2da, u+2dc, u+304, u+308, u+329, u+2000-206f,
+        u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+    font-weight: 100 900;
+    font-stretch: 62% 125%;
+    font-style: normal;
+    font-display: swap;
+}

@@ -1,0 +1,294 @@
+/* —— Base —— */
+/* Reinicio, cuerpo, formularios, botones, utilidades y movimiento reducido. Todo lo demás se apoya en
+   estas reglas, así que van primero y con la especificidad más baja posible. */
+
+/* —— Reinicio —— */
+* {
+    box-sizing: border-box;
+}
+
+/* Sin el zoom del doble toque, que se comería pulsaciones rápidas; el pellizco sigue funcionando. */
+html,
+body {
+    touch-action: manipulation;
+}
+
+a {
+    color: inherit;
+    touch-action: manipulation;
+}
+
+button,
+input {
+    touch-action: manipulation;
+}
+
+select,
+label {
+    touch-action: manipulation;
+}
+
+/* —— Cuerpo —— */
+/* Cifras tabulares para toda la página. Las reglas que fijan la letra completa (familia, tamaño, peso e
+   interlínea) las devuelven a normal de forma explícita, para no heredarlas donde no tocan. */
+body {
+    margin: 0;
+    font-family: Archivo, system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    -webkit-text-size-adjust: 100%;
+    color: var(--text);
+    accent-color: var(--brand);
+    background: var(--canvas);
+}
+
+:focus-visible {
+    outline: 3px solid var(--brand);
+    outline-offset: 2px;
+}
+
+/* —— Utilidades —— */
+/* Ocultar tiene que ganar a cualquier display de componente. */
+.is-hidden {
+    display: none !important;
+}
+
+.visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.dim {
+    color: var(--text-2);
+}
+
+.fine {
+    font-size: 13.5px;
+}
+
+.hstack {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* —— Campos —— */
+label.field {
+    display: block;
+    margin-block: 0 12px;
+    margin-inline: 0;
+    font-weight: 600;
+}
+
+label.field > span.field-hint {
+    display: block;
+    margin-block-start: 3px;
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--text-3);
+}
+
+/* El selector de color queda fuera a propósito: tiene su propia regla en la ficha de equipo. */
+input:is([type=text], [type=password], [type=search], [type=date], [type=time], [type=number]) {
+    display: block;
+    inline-size: 100%;
+    min-block-size: 44px;
+    margin-block-start: 4px;
+    padding-block: 9px;
+    padding-inline: 12px;
+    font: inherit;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-radius: 10px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+textarea,
+select {
+    display: block;
+    inline-size: 100%;
+    min-block-size: 44px;
+    margin-block-start: 4px;
+    padding-block: 9px;
+    padding-inline: 12px;
+    font: inherit;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-radius: 10px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+textarea {
+    min-block-size: 64px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--brand);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+select:focus {
+    border-color: var(--brand);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+fieldset {
+    min-inline-size: 0;
+    margin-block: 0 12px;
+    margin-inline: 0;
+    padding: 0;
+    border: 0;
+}
+
+legend {
+    margin-block: 0 6px;
+    margin-inline: 0;
+    padding: 0;
+    font-weight: 600;
+}
+
+/* —— Píldoras de opción —— */
+/* El radio real ocupa toda la píldora, transparente, para que el toque caiga siempre sobre él. */
+.pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pills label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    padding-block: 4px;
+    padding-inline: 14px;
+    font-weight: 600;
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-radius: 22px;
+    cursor: pointer;
+}
+
+.pills input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.pills label:has(input:checked) {
+    color: var(--on-brand);
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+.pills label:has(input:focus-visible) {
+    outline: 3px solid var(--brand);
+    outline-offset: 2px;
+}
+
+/* —— Botones —— */
+button,
+.button-like {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-block-size: 44px;
+    padding-block: 0;
+    padding-inline: 16px;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button.cta,
+.button-like.cta {
+    color: var(--on-brand);
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+/* Especificidad 0,2,1 a propósito: este borde de acento gana al de deshacer y al de la portada. */
+button:hover:not(:disabled) {
+    border-color: var(--brand);
+}
+
+.button-like:hover {
+    border-color: var(--brand);
+}
+
+button.cta:hover:not(:disabled),
+.button-like.cta:hover {
+    filter: brightness(1.08);
+}
+
+button.quiet {
+    padding-block: 0;
+    padding-inline: 8px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--text-2);
+    background: transparent;
+    border-color: transparent;
+}
+
+button.quiet:hover:not(:disabled) {
+    color: var(--brand);
+    border-color: transparent;
+}
+
+button:disabled {
+    opacity: .55;
+    cursor: default;
+}
+
+/* —— Mensajes en línea —— */
+.banner {
+    margin-block: 0 12px;
+    margin-inline: 0;
+    padding-block: 10px;
+    padding-inline: 12px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.banner.banner--good {
+    color: var(--good);
+    background: var(--good-bg);
+}
+
+.banner.banner--bad {
+    color: var(--bad);
+    background: var(--bad-bg);
+}
+
+/* —— Movimiento reducido —— */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}

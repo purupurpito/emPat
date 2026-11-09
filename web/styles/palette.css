@@ -1,0 +1,89 @@
+/* —— Paleta —— */
+/* Solo variables. El tema claro va en :root; el oscuro se repite dos veces, una para la preferencia del
+   sistema (salvo que la página fuerce el claro) y otra para cuando la página lo pide de forma explícita. */
+
+/* —— Tema claro —— */
+:root {
+    --text: #2a211c;
+    --text-2: #5c4f45;
+    --text-3: #75675c;
+    --canvas: #fbf7f1;
+    --card: #fffdf9;
+    --card-2: #f3ece2;
+    --rule: #e6dccf;
+    --brand: #c2410c;
+    --on-brand: #ffffff;
+    --brand-soft: #fbe6d8;
+    --good: #3f7d3a;
+    --good-bg: #e6f0e2;
+    --bad: #b91c1c;
+    --bad-bg: #fce8e6;
+    --night: #2a211c;
+    --night-2: #3a2e27;
+    --on-night: #ffffff;
+    --on-night-2: #cbbbae;
+    --ember: #fdba8c;
+    --card-yellow: #f5c400;
+    --card-red: #d32f2f;
+    --floor: #e9893b;
+    --floor-edge: #c96f25;
+    --net: #111;
+    --net-light: #eee;
+    --veil: rgba(23, 18, 15, .6);
+    --flash-shade: 0 6px 20px rgba(23, 18, 15, .3);
+    --hairline: 1px solid var(--rule);
+    --lift: 0 1px 2px rgba(42, 33, 28, .05), 0 2px 8px rgba(42, 33, 28, .06);
+    --condensed: Archivo, Arial Narrow, system-ui, sans-serif;
+    --narrow: 72%;
+    color-scheme: light;
+}
+
+/* —— Tema oscuro por preferencia del sistema —— */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --text: #f5eee6;
+        --text-2: #cdbfb2;
+        --text-3: #9e8f82;
+        --canvas: #17120f;
+        --card: #211a16;
+        --card-2: #2b231e;
+        --rule: #3a2f28;
+        --brand: #fb8a4c;
+        --on-brand: #1a0e06;
+        --brand-soft: #3d2416;
+        --good: #6fbf63;
+        --good-bg: #17291a;
+        --bad: #ff7a6e;
+        --bad-bg: #3a1714;
+        --night: #0f0b09;
+        --night-2: #2a211c;
+        --on-night-2: #b5a598;
+        --ember: #fb8a4c;
+        --lift: none;
+        color-scheme: dark;
+    }
+}
+
+/* —— Tema oscuro pedido por la página —— */
+:root[data-theme="dark"] {
+    --text: #f5eee6;
+    --text-2: #cdbfb2;
+    --text-3: #9e8f82;
+    --canvas: #17120f;
+    --card: #211a16;
+    --card-2: #2b231e;
+    --rule: #3a2f28;
+    --brand: #fb8a4c;
+    --on-brand: #1a0e06;
+    --brand-soft: #3d2416;
+    --good: #6fbf63;
+    --good-bg: #17291a;
+    --bad: #ff7a6e;
+    --bad-bg: #3a1714;
+    --night: #0f0b09;
+    --night-2: #2a211c;
+    --on-night-2: #b5a598;
+    --ember: #fb8a4c;
+    --lift: none;
+    color-scheme: dark;
+}
