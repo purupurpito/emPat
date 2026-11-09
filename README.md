@@ -24,7 +24,7 @@ La web se puede instalar como aplicación gracias a `manifest.webmanifest`.
 
 ## Publicación
 
-El flujo `.github/workflows/pages.yml` pasa las pruebas y publica el contenido de `web/` en GitHub Pages con cada envío a `main`. En la configuración del repositorio, Pages tiene que tener como origen «GitHub Actions»: la publicación desde una rama solo admite la raíz o `docs/`, no `web/`.
+El flujo `.github/workflows/pages.yml` pasa las pruebas y publica el contenido de `web/` en https://purupurpito.github.io/emPat/ con cada envío a `main`. En la configuración del repositorio, Pages tiene como origen «GitHub Actions», porque la publicación desde una rama solo admite la raíz o `docs/`, no `web/`.
 
 ## Organización
 
@@ -49,6 +49,10 @@ Hace falta Node 20.19, 22.7 o superior (las pruebas cargan los módulos ES de `w
 - `node tests/fuzz/random-matches.mjs --games 1500 --seed 7`: partidos simulados al azar contra los invariantes del reglamento.
 - `node tests/oracles/swiss-sheet.mjs [--cache carpeta]`: reproduce paso a paso un acta de referencia publicada. Necesita red la primera vez y `pdftotext`.
 - `node tests/oracles/league-csv.mjs --minimum 114 [--data carpeta]`: reproduce partidos reales de liga a partir de sus datos abiertos, que descarga si no están en la carpeta.
+
+## Licencia
+
+Todos los derechos reservados. Se puede usar la aplicación publicada en https://purupurpito.github.io/emPat/, pero copiar, modificar o redistribuir el código necesita permiso del autor. Las condiciones completas están en `LICENSE`.
 
 ## Aviso
 

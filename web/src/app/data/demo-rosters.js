@@ -18,7 +18,7 @@ home | Equipo Azul
     13 Iker Mena Soto
     14 Pere Albà Quintana
     16 Unai Ribas Duran
-    18 Nico Ferrando Gual
+    18 Nico Serra Gual
     19 Siscu Bonet Arnau
     20 Txema Ruiz Llop [l]
     23 Hèctor Vilar Mas
