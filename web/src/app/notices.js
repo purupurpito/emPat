@@ -4,9 +4,9 @@
  * @module src/app/notices.js
  */
 
-import { currentPeriod, needsActingCaptain, SIDES } from "../rules/index.js"
+import { currentPeriod, needsActingCaptain, rival, SIDES } from "../rules/index.js"
 import { UI_TEXT } from "./constants.js"
-import { LiberoExitNotice } from "./dialogs/libero-exit.js"
+import { LiberoExitNotice, LiberoLeaveDialog, LiberoReturnDialog } from "./dialogs/libero-exit.js"
 
 /**
  * Nombre de un lado según los datos del acta.
@@ -95,8 +95,64 @@ export function installNotices(app) {
         const exits = match.automatic
             .slice(change.autoBefore)
             .filter((entry) => entry.kind === "liberoAutoOut")
-        if (exits.length > 0 && session.record.settings.liberoPrompt !== false) {
+        const helps = session.record.settings.liberoPrompt !== false
+        if (exits.length > 0 && helps) {
             new LiberoExitNotice(app).open({ exits })
+            return
+        }
+        if (!helps || match.phase !== "live") {
+            return
+        }
+        const period = currentPeriod(match)
+        const leaving = SIDES.find((side) => period.liberoMustLeave[side])
+        if (leaving) {
+            new LiberoLeaveDialog(app).open({ side: leaving })
+            return
+        }
+        const proposal = liberoReturn(match, change.play, app.rules, session.record)
+        if (proposal) {
+            new LiberoReturnDialog(app).open(proposal)
         }
     })
+}
+
+/**
+ * Propuesta de vuelta del líbero tras un punto: el equipo acaba de perder el saque, el que
+ * sacaba es un jugador al que el líbero ya reemplazó en este set, sigue en la zona I y el
+ * líbero está fuera. Propone el último líbero que entró por él y solo si el motor lo admite.
+ * @param {Match} match partido tras la jugada
+ * @param {object} play jugada aceptada
+ * @param {object} rules motor de reglas
+ * @param {object} record acta
+ * @returns {{side: string, libero: string, server: string}|null}
+ */
+function liberoReturn(match, play, rules, record) {
+    if (play.kind !== "rally" || !match.settings.liberoAllowed) {
+        return null
+    }
+    const period = currentPeriod(match)
+    const winner = period.serving
+    const side = rival(winner)
+    const won = period.turns[winner].at(-1)
+    const lost = period.turns[side].at(-1)
+    // Cambio de saque: el turno del ganador se ha abierto con este mismo punto.
+    if (!won || !lost || won.since !== period.score[winner] || period.libero[side]) {
+        return null
+    }
+    const server = lost.server
+    if (period.rotation[side][0] !== server) {
+        return null
+    }
+    const team = match.teams[side]
+    const swaps = period.liberoSwaps[side]
+        .filter((swap) => swap.leaving === server && team.find(swap.entering)?.libero)
+    const libero = swaps.at(-1)?.entering
+    if (!libero) {
+        return null
+    }
+    const trial = { kind: "liberoIn", side, libero, leaving: server, at: new Date().toISOString() }
+    if (rules.check(record.settings, record.info, record.plays, trial) !== null) {
+        return null
+    }
+    return { side, libero, server }
 }

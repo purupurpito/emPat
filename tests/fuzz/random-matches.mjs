@@ -89,6 +89,9 @@ class RandomGame {
         this.#rules = rules
         this.#rng = rng
         this.settings = { bestOf: pick(rng, [5, 5, 3]), fullSetRule: rng() < 0.3 }
+        if (rng() < 0.5) {
+            this.settings.liberoExitConfirm = true
+        }
         this.info = {}
         this.plays = []
         this.tried = 0
@@ -281,6 +284,12 @@ function stepUndo(rules, rng, game) {
  * @returns {string|null}
  */
 function stepReplaceSanctioned(game, match, period) {
+    // Con una salida del líbero pendiente no se admite ningún cambio: primero se apunta la salida.
+    const waiting = ["home", "away"].find((each) => period.liberoMustLeave[each])
+    if (waiting) {
+        game.offer({ kind: "liberoOut", side: waiting })
+        return null
+    }
     const side = period.mustReplace.home.length > 0 ? "home" : "away"
     const leaving = period.mustReplace[side][0]
     const bench = match.teams[side].players
@@ -308,6 +317,11 @@ function stepReplaceSanctioned(game, match, period) {
  * @param {object} period periodo en juego
  */
 function stepLive(rules, rng, game, match, period) {
+    const waiting = ["home", "away"].find((each) => period.liberoMustLeave[each])
+    if (waiting && rng() < 0.7) {
+        game.offer({ kind: "liberoOut", side: waiting })
+        return
+    }
     const side = pick(rng, ["home", "away"])
     const shirts = match.teams[side].players.map((player) => player.shirt)
     const action = weighted(rng, LIVE_ACTIONS)

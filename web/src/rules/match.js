@@ -44,6 +44,15 @@ const HANDLERS = new Map(Object.entries({
 }))
 
 /**
+ * Jugadas que no se admiten mientras un líbero que ha rotado a la delantera espera a que el
+ * anotador apunte su salida. Tiempos, sanciones sin punto, observaciones y firmas sí.
+ * @type {ReadonlySet<string>}
+ */
+const WAIT_FOR_LIBERO_EXIT = new Set([
+    "rally", "replayRally", "rotationFault", "substitution", "liberoIn", "liberoUnfit",
+])
+
+/**
  * Crea un par {home, away} con el mismo valor primitivo o con objetos nuevos por lado.
  * @param {() => unknown} make fábrica del valor inicial
  * @returns {{home: unknown, away: unknown}}
@@ -113,6 +122,9 @@ export class Match {
         const handler = HANDLERS.get(normal.kind)
         if (handler === undefined) {
             deny(TEXT.unknownPlay(normal.kind))
+        }
+        if (WAIT_FOR_LIBERO_EXIT.has(normal.kind) && this.phase === PHASE.live) {
+            rallyPlays.denyWhileLiberoMustLeave(this.current)
         }
         handler(this, normal, normal.at || null)
     }

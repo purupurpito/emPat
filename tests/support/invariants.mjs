@@ -253,8 +253,13 @@ function liberoFinding(period, side) {
     if (!libero) {
         return null
     }
-    if (!BACK_ZONES.includes(libero.zone)) {
+    // Con la salida confirmada por el anotador, el líbero espera en la zona IV a que la apunte.
+    const waiting = period.liberoMustLeave?.[side] === true && libero.zone === 3
+    if (!BACK_ZONES.includes(libero.zone) && !waiting) {
         return "líbero en la delantera (zona " + (libero.zone + 1) + ")"
+    }
+    if (period.liberoMustLeave?.[side] === true && !waiting) {
+        return "salida del líbero pendiente fuera de la zona IV"
     }
     if (period.serving === side && libero.zone === 0) {
         return "el líbero saca"

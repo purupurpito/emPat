@@ -33,15 +33,18 @@ export function isKidsFormat(info) {
 
 /**
  * Ajustes iniciales para unos datos: los de serie y, en infantil, sin líbero y con set
- * obligatorio. Luego se pueden cambiar en la pantalla de datos.
+ * obligatorio. Luego se pueden cambiar en la pantalla de datos. Las actas nuevas piden que el
+ * anotador confirme la salida del líbero que rota a la delantera (liberoExitConfirm); las
+ * guardadas antes no lo llevan y siguen con la salida automática.
  * @param {object} info datos del encuentro
  * @returns {object}
  */
 export function initialSettings(info) {
+    const base = { ...DEFAULT_SETTINGS, liberoExitConfirm: true }
     if (isKidsFormat(info)) {
-        return { ...DEFAULT_SETTINGS, liberoAllowed: false, fullSetRule: true }
+        return { ...base, liberoAllowed: false, fullSetRule: true }
     }
-    return { ...DEFAULT_SETTINGS }
+    return base
 }
 
 /**

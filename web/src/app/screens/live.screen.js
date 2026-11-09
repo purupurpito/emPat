@@ -60,6 +60,7 @@ export class LiveScreen extends Screen {
         "click [data-tap]": "tap",
         "click [data-acting-captain]": "nameCaptain",
         "click [data-libero-enter]": "sendLibero",
+        "click [data-libero-leave]": "confirmLiberoExit",
         "click #undo-court": "undo",
         "click #undo": "undo",
         "click #mark-replay": "markReplay",
@@ -188,6 +189,15 @@ export class LiveScreen extends Screen {
     sendLibero(event, button) {
         const [side, libero, leaving] = button.dataset.liberoEnter.split("|")
         this.app.session.commit({ kind: "liberoIn", side, libero, leaving })
+    }
+
+    /**
+     * Apunta la salida del líbero que ha rotado a la delantera, desde la franja de avisos.
+     * @param {Event} event clic
+     * @param {HTMLElement} button botón pulsado
+     */
+    confirmLiberoExit(event, button) {
+        this.app.session.commit({ kind: "liberoOut", side: button.dataset.liberoLeave })
     }
 
     /**

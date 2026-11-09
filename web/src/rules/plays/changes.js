@@ -348,10 +348,12 @@ export function liberoOut(match, play, at) {
     if (!present) {
         deny(TEXT.noLiberoOnCourt)
     }
-    if (tooSoonForLibero(match, period, side)) {
+    // La salida obligatoria por rotar a la delantera no espera a otra jugada.
+    if (!period.liberoMustLeave[side] && tooSoonForLibero(match, period, side)) {
         deny(TEXT.rallyBetweenSwaps)
     }
     logSwap(period, side, present.replacing, present.shirt, at)
+    period.liberoMustLeave[side] = false
     period.libero[side] = null
     period.lastLiberoRally[side] = period.rallyCount
 }

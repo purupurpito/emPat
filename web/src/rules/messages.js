@@ -87,6 +87,7 @@ export const TEXT = Object.freeze({
     backRowOnly: "El líbero solo reemplaza a zagueros (zonas I, V y VI).",
     liberoCannotServe: "El líbero no saca: no puede reemplazar al jugador que tiene el saque.",
     noLiberoOnCourt: "Ahora no hay ningún líbero en pista.",
+    liberoMustLeave: (shirt) => `El líbero ${shirt} ha rotado a la delantera: antes de seguir, apunta su salida.`,
     notALibero: (shirt) => `El ${shirt} no es un líbero.`,
     noLongerPlays: (shirt) => `El ${shirt} ya no participa en el partido.`,
     alreadyLibero: (shirt) => `El ${shirt} ya es líbero: no hay que volver a designarlo.`,

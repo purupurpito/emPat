@@ -165,6 +165,9 @@ refusal("El líbero no saca: no puede reemplazar al jugador que tiene el saque."
     ready().verdict(liberoIn("home", 12, 1)))
 refusal("El 9 no se encuentra en pista.", () => ready().verdict(liberoIn("home", 12, 9)))
 refusal("Ahora no hay ningún líbero en pista.", () => ready().verdict(liberoOut("home")))
+refusal("El líbero 12 ha rotado a la delantera: antes de seguir, apunta su salida.", () =>
+    ready({ liberoExitConfirm: true }).play(liberoIn("home", 12, 5)).burst("away", 1).burst("home", 1)
+    .verdict(rally("home")))
 refusal("El partido ha terminado.", () => finished().verdict(sanction("home", 1, "warning")))
 refusal("Indica a quién va la sanción.", () => ready().verdict(sanction("home", "boss", "warning")))
 refusal("Este equipo ya fue amonestado: la próxima conducta incorrecta se sanciona "
@@ -334,6 +337,7 @@ function buildTemplates() {
         El líbero solo reemplaza a zagueros (zonas I, V y VI).
         El líbero no saca: no puede reemplazar al jugador que tiene el saque.
         Ahora no hay ningún líbero en pista.
+        El líbero {} ha rotado a la delantera: antes de seguir, apunta su salida.
         El {} no es un líbero.
         El {} ya no participa en el partido.
         El {} ya es líbero: no hay que volver a designarlo.

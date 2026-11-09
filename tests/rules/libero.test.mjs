@@ -13,6 +13,7 @@ import {
     rally,
     sanction,
     substitution,
+    timeout,
 } from "../support/plays.mjs"
 import { Table, asShirts, liberoPlayer } from "../support/table.mjs"
 
@@ -172,3 +173,59 @@ describe("líbero en pista y sustituciones", function () {
         table.play(rally("home"))
     })
 })
+
+describe("salida del líbero confirmada por el anotador (liberoExitConfirm)", function () {
+    const CONFIRM = { liberoExitConfirm: true }
+
+    it("al rotar a la zona IV sigue en pista, pendiente de salir, y no se anota nada solo", function () {
+        const table = Table.ready(rules, CONFIRM).play(liberoIn("away", 12, 5))
+        const match = table.burst("away", 1).state()
+        const period = rules.currentPeriod(match)
+        assert.equal(period.libero.away.shirt, "12")
+        assert.equal(period.liberoMustLeave.away, true)
+        assert.deepEqual(rules.onCourt(period, "away"), asShirts([2, 3, 4, 12, 6, 1]))
+        assert.equal(match.automatic.some((entry) => entry.kind === "liberoAutoOut"), false)
+        assert.equal(period.liberoSwaps.away.length, 1, "solo consta la entrada")
+    })
+
+    it("no deja anotar punto, cambio ni otra entrada del líbero hasta apuntar la salida", function () {
+        const table = Table.ready(rules, CONFIRM).play(liberoIn("away", 12, 5)).burst("away", 1)
+        const pending = /ha rotado a la delantera/
+        assert.match(table.refuse(rally("home")), pending)
+        assert.match(table.refuse(rally("away")), pending)
+        assert.match(table.refuse(substitution("home", 3, 7)), pending)
+        assert.match(table.refuse(liberoIn("away", 13, 12)), pending)
+        assert.match(table.refuse(liberoIn("home", 12, 6)), pending)
+        table.play(timeout("home"))
+    })
+
+    it("la salida confirmada entra sin esperar jugada y queda como reemplazo con hora y marcador", function () {
+        const table = Table.ready(rules, CONFIRM).play(liberoIn("away", 12, 5)).burst("away", 1)
+        table.play(liberoOut("away"))
+        const period = table.period()
+        assert.equal(period.libero.away, null)
+        assert.equal(period.liberoMustLeave.away, false)
+        assert.deepEqual(rules.onCourt(period, "away"), asShirts([2, 3, 4, 5, 6, 1]))
+        const swap = period.liberoSwaps.away.at(-1)
+        assert.equal(swap.entering, "5")
+        assert.equal(swap.leaving, "12")
+        assert.equal(swap.own, 1)
+        assert.equal(swap.rival, 0)
+        assert.equal(swap.auto, undefined)
+        assert.equal(typeof swap.at, "string")
+        table.play(rally("home"))
+    })
+
+    it("si el set se cierra con ese mismo punto la salida se apunta sola", function () {
+        const table = Table.ready(rules, { ...CONFIRM, setPoints: 3 })
+        table.burst("away", 2).burst("home", 1).play(liberoIn("away", 12, 6))
+        const match = table.burst("away", 1).state()
+        const first = match.periods[0]
+        assert.equal(first.winner, "away")
+        assert.equal(first.libero.away, null)
+        assert.equal(first.liberoMustLeave.away, false)
+        assert.equal(first.liberoSwaps.away.at(-1).auto, true)
+        assert.equal(match.automatic.filter((entry) => entry.kind === "liberoAutoOut").length, 1)
+    })
+})
+

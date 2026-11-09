@@ -59,6 +59,7 @@ export class Period {
         this.actingCaptain = perSide(() => null)
         this.lastLiberoRally = perSide(() => -1)
         this.mustReplace = perSide(() => [])
+        this.liberoMustLeave = perSide(() => false)
         this.subCount = perSide(() => 0)
     }
 
@@ -85,8 +86,9 @@ export class Period {
 
     /**
      * Gira la rotación de un lado una posición (FIVB 7.6). Si el líbero llega así a la
-     * delantera sale solo (FIVB 19.3.1.3): vuelve el jugador al que sustituía y queda constancia
-     * como salida automática, con el marcador ya actualizado.
+     * delantera tiene que salir (FIVB 19.3.1.3). Con liberoExitConfirm en los ajustes queda
+     * pendiente hasta que el anotador apunte la salida (liberoOut); sin él sale solo, como
+     * salida automática.
      * @param {"home"|"away"} side lado
      * @param {Match} match partido, donde se apuntan las salidas automáticas
      * @param {string|null} at marca de tiempo ISO
@@ -102,6 +104,23 @@ export class Period {
         if (libero.zone !== FRONT_ENTRY_ZONE) {
             return
         }
+        if (match.settings.liberoExitConfirm) {
+            this.liberoMustLeave[side] = true
+            return
+        }
+        this.dropLibero(side, match, at)
+    }
+
+    /**
+     * Saca al líbero sin jugada del anotador: vuelve el jugador al que sustituía y queda
+     * constancia como salida automática, con el marcador del momento.
+     * @param {"home"|"away"} side lado
+     * @param {Match} match partido, donde se apuntan las salidas automáticas
+     * @param {string|null} at marca de tiempo ISO
+     */
+    dropLibero(side, match, at) {
+        const libero = this.libero[side]
+        this.liberoMustLeave[side] = false
         match.automatic.push({
             kind: "liberoAutoOut",
             side,

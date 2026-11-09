@@ -217,8 +217,9 @@ function formatCard(settings) {
             id: "opt-libero-prompt",
             on: settings.liberoPrompt !== false,
             title: "Ayuda con el líbero",
-            text: "Cuando el equipo va a recibir, sugiere por quién puede entrar; cuando le toca ir"
-                + " delante, avisa de que debe salir y de quién vuelve.",
+            text: "Cuando el equipo va a recibir, sugiere por quién puede entrar y, si acaba de"
+                + " sacar el jugador al que reemplazaba, propone que vuelva; cuando le toca ir"
+                + " delante, pide confirmar su salida.",
         },
         {
             id: "opt-liberos",

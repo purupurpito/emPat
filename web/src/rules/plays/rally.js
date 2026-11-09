@@ -206,6 +206,7 @@ export function awardRally(match, side, cause, at) {
     if (period.mustReplace.home.length || period.mustReplace.away.length) {
         deny(TEXT.replaceSanctionedFirst)
     }
+    denyWhileLiberoMustLeave(period)
     period.score[side] += 1
     period.rallyCount += 1
     period.rallyLog.push({ side, home: period.score.home, away: period.score.away, cause, at })
@@ -250,6 +251,12 @@ function reachesSwitch(match, period, side) {
  */
 export function closePeriod(match, at) {
     const period = match.current
+    // Al acabar el set ya no hay jugada que esperar: la salida pendiente del líbero se apunta sola.
+    for (const side of ["home", "away"]) {
+        if (period.liberoMustLeave[side]) {
+            period.dropLibero(side, match, at)
+        }
+    }
     let winner = "away"
     if (period.score.home > period.score.away) {
         winner = "home"
@@ -286,4 +293,18 @@ export function closePeriod(match, at) {
 function finish(match, at) {
     match.phase = PHASE.over
     match.endedAt = at
+}
+
+/**
+ * Corta la jugada si algún líbero ha rotado a la delantera y el anotador aún no ha apuntado su
+ * salida (FIVB 19.3.1.3).
+ * @param {Period} period periodo en juego
+ * @throws {RuleViolation} si hay una salida del líbero pendiente
+ */
+export function denyWhileLiberoMustLeave(period) {
+    for (const side of ["home", "away"]) {
+        if (period.liberoMustLeave[side]) {
+            deny(TEXT.liberoMustLeave(period.libero[side].shirt))
+        }
+    }
 }

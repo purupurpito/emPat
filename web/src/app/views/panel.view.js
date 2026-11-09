@@ -370,6 +370,23 @@ function liberoHint({ match, period, info, side }) {
 }
 
 /**
+ * Salida del líbero pendiente de confirmar: ha rotado a la delantera y no se puede anotar el
+ * siguiente punto hasta apuntarla. Se ve siempre, aunque la ayuda con el líbero esté apagada.
+ * @param {{period: Period, info: object, side: string}} model contexto y lado
+ * @returns {Markup|null}
+ */
+function liberoLeaving({ period, info, side }) {
+    const libero = period.libero[side]
+    if (!period.liberoMustLeave[side] || !libero) {
+        return null
+    }
+    const lead = html`<p class="alert-text">El líbero ${libero.shirt} ha rotado a la zona IV: tiene que salir y vuelve el ${libero.replacing}.</p>`
+    const button = html`<button type="button" class="cta" data-libero-leave="${side}">Confirmar salida</button>`
+    return html`<div class="alert alert--urgent" role="group" aria-label="Salida del líbero">${
+        alertTeam(info, side)}${lead}<div class="alert-choices">${button}</div></div>`
+}
+
+/**
  * Aviso de los jugadores que hay que sustituir (expulsión, descalificación o lesión).
  * @param {{period: Period, info: object, side: string}} model contexto y lado
  * @returns {Markup|null}
@@ -396,7 +413,8 @@ export function matchAlerts(model) {
     for (const side of [left, rival(left)]) {
         const scoped = { ...model, side }
         const urgent = pendingChange(scoped)
-        parts.push(urgent, captainPrompt(scoped), urgent ? "" : liberoHint(scoped))
+        const leaving = liberoLeaving(scoped)
+        parts.push(urgent, leaving, captainPrompt(scoped), urgent || leaving ? "" : liberoHint(scoped))
     }
     const shown = parts.filter((part) => part !== null && part !== "")
     if (shown.length === 0) {

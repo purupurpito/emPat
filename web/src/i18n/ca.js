@@ -177,7 +177,12 @@ const LITERAL_ROWS = `
     Actualizar ⇒ Actualitza
     Ahora el sorteo solo corresponde antes del set decisivo. ⇒ Ara el sorteig només correspon abans
         del set decisiu.
+    Ahora no ⇒ Ara no
     Ahora no hay ningún líbero en pista. ⇒ Ara no hi ha cap lliure a la pista.
+    Al confirmarla, la salida queda apuntada en el acta con el marcador actual. Hasta entonces no se
+        puede anotar el siguiente punto. FIVB 19.3.1.3. ⇒ En confirmar-la, la sortida queda anotada
+        a l'acta amb el marcador actual. Fins aleshores no es pot anotar el punt següent. FIVB
+        19.3.1.3.
     Amonestación ⇒ Amonestació
     Amonestación por retraso ⇒ Amonestació per retard
     Ampliable a 10 a petición del organizador (FIVB 18.1). ⇒ Ampliable a 10 a petició de
@@ -224,6 +229,7 @@ const LITERAL_ROWS = `
         desa tot al teu dispositiu.
     Conducta incorrecta · FIVB 21 ⇒ Conducta incorrecta · FIVB 21
     Confirmar ⇒ Confirma
+    Confirmar salida ⇒ Confirma la sortida
     Confirmar sustitución ⇒ Confirma la substitució
     Continuar con el sorteo ⇒ Continua amb el sorteig
     Continuar con los equipos ⇒ Continua amb els equips
@@ -239,9 +245,10 @@ const LITERAL_ROWS = `
     Corregido a mano ⇒ Corregit a mà
     CTA-1 de algunos componentes ⇒ CTA-1 d’alguns components
     CTA-1 de todo el equipo ⇒ CTA-1 de tot l'equip
-    Cuando el equipo va a recibir, sugiere por quién puede entrar; cuando le toca ir delante, avisa
-        de que debe salir y de quién vuelve. ⇒ Quan l'equip va a rebre, suggereix per qui pot
-        entrar; quan li toca anar davant, avisa que ha de sortir i de qui torna.
+    Cuando el equipo va a recibir, sugiere por quién puede entrar y, si acaba de sacar el jugador al
+        que reemplazaba, propone que vuelva; cuando le toca ir delante, pide confirmar su salida. ⇒
+        Quan l'equip va a rebre, suggereix per qui pot entrar i, si acaba de servir el jugador a qui
+        substituïa, proposa que torni; quan li toca anar davant, demana confirmar-ne la sortida.
     Cuántos ⇒ Quants
     Cuerpo técnico ⇒ Cos tècnic
     Cumple ⇒ Compleix
@@ -403,6 +410,7 @@ const LITERAL_ROWS = `
     Marcador del equipo infractor al cometerla (si se conoce) ⇒ Marcador de l'equip infractor quan
         la va cometre (si se sap)
     Masajista ⇒ Massatgista
+    Más tarde ⇒ Més tard
     Médico ⇒ Metge
     Mesa del anotador ⇒ Taula de l'anotador
     Min. ⇒ Min.
@@ -519,6 +527,7 @@ const LITERAL_ROWS = `
     Saca ⇒ Serveix
     Sale ⇒ Surt
     Salida del líbero ⇒ Sortida del lliure
+    Sí, entra el líbero ⇒ Sí, entra el lliure
     Sanción ⇒ Sanció
     Sancionado ⇒ Sancionat
     Sanciones ⇒ Sancions
@@ -587,6 +596,7 @@ const LITERAL_ROWS = `
     Ver el acta ⇒ Mostra l'acta
     Visitante ⇒ Visitant
     Volver ⇒ Torna
+    Vuelta del líbero ⇒ Tornada del lliure
     Volver atrás un punto ⇒ Torna enrere un punt
     X: set entero como titular sin ser sustituido · *: corrección manual del anotador. ⇒ X: set
         sencer com a titular sense ser substituït · *: correcció manual de l'anotador.
@@ -841,6 +851,15 @@ const PATTERN_ROWS = `
     Está en pista el {word}, en lugar del {word}. ⇒ És a la pista el {1}, en lloc del {2}.
     : el líbero {word} rota a la zona IV y debe salir. ⇒ : el lliure {1} rota a la zona IV i ha de
         sortir.
+    El líbero {word} ha rotado a la zona IV y tiene que salir. ⇒ El lliure {1} ha rotat a la zona IV
+        i ha de sortir.
+    El líbero {word} ha rotado a la zona IV: tiene que salir y vuelve el {word}. ⇒ El lliure {1} ha
+        rotat a la zona IV: ha de sortir i torna el {2}.
+    El líbero {word} ha rotado a la delantera: antes de seguir, apunta su salida. ⇒ El lliure {1} ha
+        rotat a la davantera: abans de continuar, anota'n la sortida.
+    Ha sacado el {word} y el equipo ha perdido el saque. ⇒ Ha servit el {1} i l'equip ha perdut el
+        servei.
+    ¿Entra el líbero {word} por el {word}? ⇒ Entra el lliure {1} pel {2}?
     Queda disponible el otro líbero, el {word}. ⇒ Queda disponible l'altre lliure, el {1}.
     Firma · {text} ⇒ Signatura · {1:t}
     Ningún suplente puede relevar al {word} con una sustitución regular. ⇒ Cap suplent no pot
