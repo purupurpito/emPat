@@ -55,8 +55,9 @@ export class LiberoExitNotice {
 }
 
 /**
- * Salida del líbero que ha rotado a la delantera y que el anotador tiene que confirmar. Al
- * confirmarla se apunta como cualquier salida del líbero (liberoOut), con su marcador.
+ * Salida del líbero que ha rotado a la delantera y que el anotador tiene que confirmar. Es
+ * obligatoria: ni el fondo ni Escape la cierran, y solo se sale apuntándola como cualquier
+ * salida del líbero (liberoOut), con su marcador, o deshaciendo el punto que la provocó.
  */
 export class LiberoLeaveDialog {
     /**
@@ -64,7 +65,7 @@ export class LiberoLeaveDialog {
      */
     static events = {
         "click #libero-leave-ok": "confirm",
-        "click #libero-leave-later": "later",
+        "click #libero-leave-undo": "undo",
     }
 
     #app
@@ -96,7 +97,7 @@ export class LiberoLeaveDialog {
             back: libero.replacing,
             backName: match.teams[side].find(libero.replacing)?.name || "",
         })
-        this.#app.dialog.open(markup, { controller: this, focus: "#libero-leave-ok" })
+        this.#app.dialog.open(markup, { controller: this, focus: "#libero-leave-ok", locked: true })
     }
 
     /**
@@ -109,16 +110,21 @@ export class LiberoLeaveDialog {
     }
 
     /**
-     * Cierra sin apuntar nada; la salida sigue pendiente en la franja de avisos.
+     * Deshace el último punto, tras confirmarlo. Si ya no queda salida pendiente, cierra.
      */
-    later() {
-        this.#app.dialog.close()
+    undo() {
+        const session = this.#app.session
+        session.undo()
+        if (!session.match.current?.liberoMustLeave[this.#side]) {
+            this.#app.dialog.close()
+        }
     }
 }
 
 /**
  * Propuesta de volver a meter al líbero por el jugador que acaba de perder el saque. Solo
- * propone: si el anotador acepta se apunta la entrada (liberoIn) como cualquier otra.
+ * propone, pero pide respuesta: no se cierra tocando fuera. Si el anotador acepta se apunta
+ * la entrada (liberoIn) como cualquier otra.
  */
 export class LiberoReturnDialog {
     /**
@@ -154,7 +160,7 @@ export class LiberoReturnDialog {
             libero,
             server,
         })
-        this.#app.dialog.open(markup, { controller: this, focus: "#libero-return-ok" })
+        this.#app.dialog.open(markup, { controller: this, focus: "#libero-return-ok", locked: true })
     }
 
     /**

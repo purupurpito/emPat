@@ -14,7 +14,7 @@
 const CACHE_PREFIX = "empat/"
 
 /** Caché de esta versión. */
-const CACHE_NAME = CACHE_PREFIX + "4"
+const CACHE_NAME = CACHE_PREFIX + "5"
 
 /** Archivos de la web que se guardan al instalar, uno por línea: todos menos este. */
 const PRECACHE = `

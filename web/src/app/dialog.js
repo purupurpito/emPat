@@ -22,6 +22,7 @@ export class DialogHost {
     #bus
     #release = null
     #installed = false
+    #locked = false
 
     /**
      * @param {{countdown?: Countdown, bus?: Bus}} [deps] cuenta atrás que se para al cerrar y
@@ -42,7 +43,7 @@ export class DialogHost {
         this.#installed = true
         byId("dlg").addEventListener("click", (event) => {
             const origin = event.target
-            if (origin.id === "dlg" || origin.closest("[data-dismiss]")) {
+            if (origin.closest("[data-dismiss]") || (origin.id === "dlg" && !this.#locked)) {
                 this.close()
             }
         })
@@ -52,12 +53,14 @@ export class DialogHost {
      * Muestra un diálogo. Si se pasa un controlador, sus eventos estáticos (el mismo formato que
      * las pantallas) se reparten sobre #dlg-body hasta que se cierre.
      * @param {string|Markup} markup contenido
-     * @param {{focus?: string, centered?: boolean, controller?: object}} [options] selector del
-     *     elemento que recibe el foco (por defecto, el primer control), hoja centrada en vez de
-     *     pegada abajo y objeto con los métodos de los eventos
+     * @param {{focus?: string, centered?: boolean, controller?: object, locked?: boolean}}
+     *     [options] selector del elemento que recibe el foco (por defecto, el primer control),
+     *     hoja centrada en vez de pegada abajo, objeto con los métodos de los eventos y si es
+     *     obligatoria: entonces ni el fondo ni Escape la cierran, solo sus propios botones
      */
-    open(markup, { focus, centered, controller } = {}) {
+    open(markup, { focus, centered, controller, locked = false } = {}) {
         this.#detach()
+        this.#locked = locked
         const body = byId("dlg-body")
         body.innerHTML = String(markup)
         const sheet = byId("dlg")
@@ -91,6 +94,7 @@ export class DialogHost {
     close() {
         this.#countdown?.stop()
         this.#detach()
+        this.#locked = false
         const sheet = byId("dlg")
         sheet.classList.remove("dlg--center")
         sheet.classList.add("is-hidden")
@@ -104,6 +108,14 @@ export class DialogHost {
      */
     get isOpen() {
         return !byId("dlg").classList.contains("is-hidden")
+    }
+
+    /**
+     * Si el diálogo visible es obligatorio y solo se cierra con sus botones.
+     * @returns {boolean}
+     */
+    get isLocked() {
+        return this.isOpen && this.#locked
     }
 
     /**

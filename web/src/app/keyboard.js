@@ -58,14 +58,16 @@ function acceptsMatchKeys(app) {
 }
 
 /**
- * Escape cierra el diálogo abierto; en el partido, las flechas dan el punto al equipo de ese
+ * Escape cierra el diálogo abierto, salvo los obligatorios; en el partido, las flechas dan el punto al equipo de ese
  * lado de la mesa y Ctrl+Z (o Cmd+Z) deshace.
  * @param {App} app aplicación
  */
 export function installShortcuts(app) {
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && app.dialog.isOpen) {
-            app.dialog.close()
+            if (!app.dialog.isLocked) {
+                app.dialog.close()
+            }
             return
         }
         if (!acceptsMatchKeys(app)) {

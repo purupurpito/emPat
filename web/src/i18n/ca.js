@@ -179,10 +179,6 @@ const LITERAL_ROWS = `
         del set decisiu.
     Ahora no ⇒ Ara no
     Ahora no hay ningún líbero en pista. ⇒ Ara no hi ha cap lliure a la pista.
-    Al confirmarla, la salida queda apuntada en el acta con el marcador actual. Hasta entonces no se
-        puede anotar el siguiente punto. FIVB 19.3.1.3. ⇒ En confirmar-la, la sortida queda anotada
-        a l'acta amb el marcador actual. Fins aleshores no es pot anotar el punt següent. FIVB
-        19.3.1.3.
     Amonestación ⇒ Amonestació
     Amonestación por retraso ⇒ Amonestació per retard
     Ampliable a 10 a petición del organizador (FIVB 18.1). ⇒ Ampliable a 10 a petició de
@@ -261,6 +257,7 @@ const LITERAL_ROWS = `
     Descalificación ⇒ Desqualificació
     Descargar una copia del acta ⇒ Baixa una còpia de l'acta
     Deshacer ⇒ Desfés
+    Deshacer el último punto ⇒ Desfés l'últim punt
     Desmárcalo si la categoría no usa líbero. ⇒ Desmarca-ho si la categoria no fa servir lliure.
     Detalle del error: el programa del acta no ha llegado a ponerse en marcha (puede que lo bloquee
         el navegador o alguna extensión). ⇒ Detall de l'error: el programa de l'acta no s'ha arribat
@@ -355,6 +352,9 @@ const LITERAL_ROWS = `
     Ganador ⇒ Guanyador
     Guardar ⇒ Desa
     Ha surgido un problema ⇒ Hi ha hagut un problema
+    Hay que confirmarla para seguir: queda apuntada en el acta con el marcador actual. Si el último
+        punto estaba mal, deshazlo. FIVB 19.3.1.3. ⇒ Cal confirmar-la per continuar: queda anotada a
+        l'acta amb el marcador actual. Si l'últim punt estava malament, desfés-lo. FIVB 19.3.1.3.
     Herramientas ⇒ Eines
     Historial ⇒ Historial
     Hora ⇒ Hora
@@ -410,7 +410,6 @@ const LITERAL_ROWS = `
     Marcador del equipo infractor al cometerla (si se conoce) ⇒ Marcador de l'equip infractor quan
         la va cometre (si se sap)
     Masajista ⇒ Massatgista
-    Más tarde ⇒ Més tard
     Médico ⇒ Metge
     Mesa del anotador ⇒ Taula de l'anotador
     Min. ⇒ Min.

@@ -16,8 +16,8 @@ const RULE_NOTE = "Regresa el jugador al que reemplazaba, que es el único que p
 /**
  * Explicación bajo la salida que confirma el anotador.
  */
-const LEAVE_NOTE = "Al confirmarla, la salida queda apuntada en el acta con el marcador actual."
-    + " Hasta entonces no se puede anotar el siguiente punto. FIVB 19.3.1.3."
+const LEAVE_NOTE = "Hay que confirmarla para seguir: queda apuntada en el acta con el marcador"
+    + " actual. Si el último punto estaba mal, deshazlo. FIVB 19.3.1.3."
 
 /**
  * Párrafo y casilla de una salida: qué líbero sale y quién vuelve.
@@ -59,9 +59,9 @@ export function liberoLeaveView(model) {
         ""}class="choice-grid">${back}</div></div>`
     const hint = html`<p class="fine dim">${LEAVE_NOTE}</p>`
     const ok = html`<button type="button" class="cta" id="libero-leave-ok">Confirmar salida</button>`
-    const later = html`<button type="button" class="quiet" id="libero-leave-later">Más tarde</button>`
+    const undo = html`<button type="button" class="quiet" id="libero-leave-undo">Deshacer el último punto</button>`
     return html`${dialogHead({ title: "Salida del líbero", team: model.team, tint: model.tint })}${
-        body}${hint}${dialogFoot(html`${ok}${later}`)}`
+        body}${hint}${dialogFoot(html`${ok}${undo}`)}`
 }
 
 /**

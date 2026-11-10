@@ -78,7 +78,8 @@ function linesFor(match, info, { play, captainBefore }) {
  * Escucha las jugadas confirmadas y muestra los avisos que correspondan. Si hay varios salen
  * juntos en un solo aviso, para que uno no tape al otro. Si el líbero ha tenido que salir
  * solo al rotar a delantero, abre además el diálogo que lo explica, salvo que el acta lo tenga
- * desactivado.
+ * desactivado. Si la salida la tiene que confirmar el anotador, la pide con un diálogo
+ * obligatorio cada vez que se pinta la pantalla.
  * @param {App} app aplicación
  */
 export function installNotices(app) {
@@ -100,13 +101,7 @@ export function installNotices(app) {
             new LiberoExitNotice(app).open({ exits })
             return
         }
-        if (!helps || match.phase !== "live") {
-            return
-        }
-        const period = currentPeriod(match)
-        const leaving = SIDES.find((side) => period.liberoMustLeave[side])
-        if (leaving) {
-            new LiberoLeaveDialog(app).open({ side: leaving })
+        if (!helps || match.phase !== "live" || pendingExit(match)) {
             return
         }
         const proposal = liberoReturn(match, change.play, app.rules, session.record)
@@ -114,6 +109,45 @@ export function installNotices(app) {
             new LiberoReturnDialog(app).open(proposal)
         }
     })
+    // Después del que pinta y del controlador que cierra su propio diálogo tras apuntar.
+    const demandExit = () => queueMicrotask(() => requireLiberoExit(app))
+    app.bus.on("render", demandExit)
+    app.bus.on("record:opened", demandExit)
+}
+
+/**
+ * Lado cuyo líbero ha rotado a la delantera y aún no tiene la salida apuntada.
+ * @param {Match} match partido
+ * @returns {string|undefined}
+ */
+function pendingExit(match) {
+    if (match.phase !== "live") {
+        return undefined
+    }
+    const period = currentPeriod(match)
+    return SIDES.find((side) => period.liberoMustLeave[side])
+}
+
+/**
+ * Abre la salida obligatoria del líbero cada vez que se pinta la pantalla con una salida
+ * pendiente: tras el punto, al deshacer la salida o al volver a abrir el acta. No depende de
+ * la ayuda con el líbero, porque sin apuntarla no se puede seguir.
+ * @param {App} app aplicación
+ */
+function requireLiberoExit(app) {
+    const session = app.session
+    if (!app.dialog || !session?.record || session.record.sealed || app.dialog.isLocked) {
+        return
+    }
+    let side
+    try {
+        side = session.match ? pendingExit(session.match) : undefined
+    } catch {
+        return
+    }
+    if (side) {
+        new LiberoLeaveDialog(app).open({ side })
+    }
 }
 
 /**
